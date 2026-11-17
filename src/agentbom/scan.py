@@ -3,6 +3,7 @@ from pathlib import Path
 from agentbom.discover import discover
 from agentbom.models import Artifact, ScanError, ScanResult
 from agentbom.parsers import parse
+from agentbom.rules import run_rules
 
 
 def scan(root: Path) -> ScanResult:
@@ -14,9 +15,11 @@ def scan(root: Path) -> ScanResult:
         )
         artifacts.extend(found)
         errors.extend(failed)
+    ordered = tuple(sorted(artifacts, key=lambda a: (a.kind, a.source.path, a.name)))
     return ScanResult(
-        artifacts=tuple(sorted(artifacts, key=lambda a: (a.kind, a.source.path, a.name))),
+        artifacts=ordered,
         errors=tuple(sorted(errors, key=_error_key)),
+        findings=run_rules(ordered),
     )
 
 

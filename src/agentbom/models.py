@@ -7,6 +7,20 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue
 Agent = Literal["claude_code", "cursor", "vscode", "copilot", "codex", "agents_md"]
 HookShell = Literal["default", "bash", "powershell"]
 RemoteTransport = Literal["http", "sse", "ws"]
+Severity = Literal["low", "medium", "high"]
+Confidence = Literal["low", "medium", "high"]
+RuleId = Literal[
+    "ABOM-001",
+    "ABOM-002",
+    "ABOM-003",
+    "ABOM-004",
+    "ABOM-005",
+    "ABOM-007",
+    "ABOM-008",
+    "ABOM-009",
+    "ABOM-010",
+]
+SEVERITY_RANK: dict[Severity, int] = {"low": 0, "medium": 1, "high": 2}
 ScriptLanguage = Literal[
     "shell", "powershell", "python", "javascript", "typescript", "ruby", "perl", "batch"
 ]
@@ -107,6 +121,17 @@ class ScanError(_Frozen):
     message: str
 
 
+class Finding(_Frozen):
+    rule_id: RuleId
+    severity: Severity
+    confidence: Confidence
+    message: str
+    location: Location
+    artifact_id: str
+    fix: str | None = None
+
+
 class ScanResult(_Frozen):
     artifacts: tuple[Artifact, ...]
     errors: tuple[ScanError, ...]
+    findings: tuple[Finding, ...]
