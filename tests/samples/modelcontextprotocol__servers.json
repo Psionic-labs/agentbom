@@ -1,0 +1,82 @@
+{
+  "repo": "modelcontextprotocol/servers",
+  "sha": "e1dc4b18dbb948921da37f3d4224a628730b43b0",
+  "artifacts": [
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "SessionStart[0].hooks[0]"
+    },
+    {
+      "kind": "mcp_server",
+      "path": ".mcp.json",
+      "name": "mcp-docs",
+      "transport": "http"
+    },
+    {
+      "kind": "rules",
+      "path": "AGENTS.md",
+      "name": "AGENTS.md"
+    },
+    {
+      "kind": "rules",
+      "path": "src/everything/AGENTS.md",
+      "name": "src/everything/AGENTS.md"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/board-ops/SKILL.md",
+      "name": "board-ops"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/client-smoke/SKILL.md",
+      "name": "client-smoke"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/issue-create/SKILL.md",
+      "name": "issue-create"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/issue-triage/SKILL.md",
+      "name": "issue-triage"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/local-dev/SKILL.md",
+      "name": "local-dev"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/pr-flow/SKILL.md",
+      "name": "pr-flow"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/pre-push-gate/SKILL.md",
+      "name": "pre-push-gate"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/project-structure/SKILL.md",
+      "name": "project-structure"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/release/SKILL.md",
+      "name": "release"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/security-advisory/SKILL.md",
+      "name": "security-advisory"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/testing/SKILL.md",
+      "name": "testing"
+    }
+  ]
+}

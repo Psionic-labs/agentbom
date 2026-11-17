@@ -1,0 +1,164 @@
+{
+  "repo": "Khan/wonder-blocks",
+  "sha": "1cd5275b3891caa4597d0a980b6b298bad8b63af",
+  "artifacts": [
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "PreToolUse[0].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "PreToolUse[1].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "PreToolUse[2].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "SessionStart[0].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "SessionStart[1].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "SessionStart[2].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".codex/hooks.json",
+      "name": "PreToolUse[0].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".codex/hooks.json",
+      "name": "PreToolUse[1].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".codex/hooks.json",
+      "name": "SessionStart[0].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".codex/hooks.json",
+      "name": "SessionStart[1].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".codex/hooks.json",
+      "name": "SessionStart[2].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".cursor/hooks.json",
+      "name": "beforeShellExecution[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".cursor/hooks.json",
+      "name": "beforeShellExecution[1]"
+    },
+    {
+      "kind": "hook",
+      "path": ".cursor/hooks.json",
+      "name": "preToolUse[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".cursor/hooks.json",
+      "name": "sessionStart[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".cursor/hooks.json",
+      "name": "sessionStart[1]"
+    },
+    {
+      "kind": "hook",
+      "path": ".cursor/hooks.json",
+      "name": "sessionStart[2]"
+    },
+    {
+      "kind": "mcp_server",
+      "path": ".cursor/mcp.json",
+      "name": "wonder-blocks-storybook",
+      "transport": "http"
+    },
+    {
+      "kind": "mcp_server",
+      "path": ".mcp.json",
+      "name": "wonder-blocks-storybook",
+      "transport": "http"
+    },
+    {
+      "kind": "mcp_server",
+      "path": ".vscode/mcp.json",
+      "name": "wonder-blocks-storybook",
+      "transport": "http"
+    },
+    {
+      "kind": "rules",
+      "path": ".cursor/rules/general.mdc",
+      "name": ".cursor/rules/general.mdc"
+    },
+    {
+      "kind": "rules",
+      "path": ".cursor/rules/mdc-files.mdc",
+      "name": ".cursor/rules/mdc-files.mdc"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/frontend-rules.instructions.md",
+      "name": ".github/instructions/frontend-rules.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/storybook.instructions.md",
+      "name": ".github/instructions/storybook.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/unit-tests.instructions.md",
+      "name": ".github/instructions/unit-tests.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": "AGENTS.md",
+      "name": "AGENTS.md"
+    },
+    {
+      "kind": "rules",
+      "path": "CLAUDE.md",
+      "name": "CLAUDE.md"
+    },
+    {
+      "kind": "skill",
+      "path": ".agents/skills/component-spec/SKILL.md",
+      "name": "component-spec"
+    },
+    {
+      "kind": "skill",
+      "path": ".agents/skills/storybook/SKILL.md",
+      "name": "storybook"
+    },
+    {
+      "kind": "skill",
+      "path": ".agents/skills/unit-tests/SKILL.md",
+      "name": "unit-tests"
+    },
+    {
+      "kind": "skill",
+      "path": ".agents/skills/wonder-blocks/SKILL.md",
+      "name": "wonder-blocks"
+    }
+  ]
+}
