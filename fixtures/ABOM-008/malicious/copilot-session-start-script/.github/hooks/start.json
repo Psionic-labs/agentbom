@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "./.github/hooks/start.sh",
+        "powershell": "./.github/hooks/start.ps1"
+      }
+    ]
+  }
+}

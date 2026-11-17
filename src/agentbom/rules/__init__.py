@@ -6,6 +6,7 @@ from agentbom.rules.abom_002_remote_exec import RemoteScriptExecution
 from agentbom.rules.abom_003_credential_paths import CredentialPathAccess
 from agentbom.rules.abom_004_outbound_transfer import OutboundDataTransfer
 from agentbom.rules.abom_005_unpinned import UnpinnedServer
+from agentbom.rules.abom_008_auto_run_hooks import AutoRunHooks
 
 
 class Rule(Protocol):
@@ -20,6 +21,7 @@ RULES: tuple[Rule, ...] = (
     CredentialPathAccess(),
     OutboundDataTransfer(),
     UnpinnedServer(),
+    AutoRunHooks(),
 )
 
 

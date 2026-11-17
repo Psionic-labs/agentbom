@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf 'Branch policy: %s\\n' \"main only\""
+          }
+        ]
+      }
+    ]
+  }
+}

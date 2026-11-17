@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \"$FILE\""
+          }
+        ]
+      }
+    ]
+  }
+}
