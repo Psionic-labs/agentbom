@@ -499,6 +499,20 @@ def test_skill_description_with_a_second_colon_reads_flat_frontmatter() -> None:
     }
 
 
+def test_flat_frontmatter_keeps_indented_lines_with_the_previous_key() -> None:
+    text = (
+        "---\nname: benchmarking\ndescription: nub vs npm: cold and warm\n"
+        "metadata:\n  internal: true\n---\nBody\n"
+    )
+    skill = _markdown(text, ".claude/skills/benchmarking/SKILL.md", "skill_md")
+    assert skill.frontmatter == {
+        "name": "benchmarking",
+        "description": "nub vs npm: cold and warm",
+        "metadata": "internal: true",
+    }
+    assert skill.body == "Body\n"
+
+
 def test_frontmatter_prefers_yaml_when_it_parses() -> None:
     text = "---\nglobs:\n  - '*.ts'\n  - '*.tsx'\nalwaysApply: true\n---\n"
     rule = _markdown(text, ".cursor/rules/ts.mdc", "rules_md")
@@ -507,7 +521,7 @@ def test_frontmatter_prefers_yaml_when_it_parses() -> None:
 
 @pytest.mark.parametrize("format", ["rules_md", "skill_md"])
 def test_frontmatter_that_is_neither_yaml_nor_flat_is_an_error(format: Format) -> None:
-    text = "---\nglobs: *.ts\n  - nested\n---\n"
+    text = "---\nglobs: *.ts\n- nested\n---\n"
     artifacts, errors = parse(text, ".claude/skills/x/SKILL.md", format, ("claude_code",))
     assert artifacts == []
     assert len(errors) == 1

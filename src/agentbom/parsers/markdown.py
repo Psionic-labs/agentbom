@@ -94,12 +94,18 @@ def _yaml_mapping(lines: list[str]) -> dict[str, JsonValue]:
 
 def _flat_mapping(lines: list[str]) -> dict[str, JsonValue] | None:
     mapping: dict[str, JsonValue] = {}
+    key: str | None = None
     for line in lines:
         if not line.strip():
+            continue
+        if line[0] in " \t" and key is not None:
+            previous = mapping[key]
+            text = line.strip()
+            mapping[key] = text if previous is None else f"{previous}\n{text}"
             continue
         match = _FLAT_LINE.fullmatch(line)
         if match is None:
             return None
-        raw = match.group(2).strip()
-        mapping[match.group(1)] = _FLAT_SCALARS.get(raw, raw)
+        key, raw = match.group(1), match.group(2).strip()
+        mapping[key] = _FLAT_SCALARS.get(raw, raw)
     return mapping
