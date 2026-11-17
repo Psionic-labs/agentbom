@@ -248,10 +248,10 @@ def test_bom_and_line_endings_do_not_change_content(tmp_path: Path) -> None:
 
 
 def test_hidden_characters_are_preserved(tmp_path: Path) -> None:
-    write_tree(tmp_path, {".mcp.json": '{"mcpServers": {"s": {"command": "a\\u200bb‮"}}}'})
+    write_tree(tmp_path, {".mcp.json": '{"mcpServers": {"s": {"command": "a\\u200bb\u202e"}}}'})
     (server,) = scan(tmp_path).artifacts
     assert isinstance(server, McpServer)
-    assert server.launch.model_dump()["command"] == "a​b‮"
+    assert server.launch.model_dump()["command"] == "a\u200bb\u202e"
 
 
 def test_root_must_be_a_directory(tmp_path: Path) -> None:
