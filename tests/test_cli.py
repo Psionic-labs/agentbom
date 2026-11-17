@@ -2,11 +2,15 @@ import hashlib
 import json
 import subprocess
 import sys
+from collections.abc import Iterable, Sequence
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
+import agentbom.rules
 from agentbom.cli import app
+from agentbom.models import Artifact, Finding, Location, RuleId, Severity
 from tests.conftest import write_tree
 
 runner = CliRunner()
@@ -36,7 +40,8 @@ def test_json_output(tmp_path: Path) -> None:
     result = runner.invoke(app, ["scan", str(tmp_path), "--format", "json"])
     assert result.exit_code == 0, result.output
     document = json.loads(result.stdout)
-    assert document["schema_version"] == 1
+    assert document["schema_version"] == 2
+    assert document["findings"] == []
     assert document["errors"] == []
     by_id = {a["id"]: a for a in document["artifacts"]}
     assert list(by_id) == [
@@ -125,6 +130,7 @@ def test_terminal_summary_singular_and_empty(tmp_path: Path) -> None:
     assert empty.exit_code == 0
     assert empty.stdout == (
         "Found: 0 MCP servers, 0 skills, 0 hooks, 0 rules files, 0 scripts, 0 settings files\n"
+        "No findings.\n"
     )
 
 
@@ -178,3 +184,120 @@ def test_default_path_is_the_current_directory(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     document = json.loads(result.stdout.decode("utf-8"))
     assert [a["id"] for a in document["artifacts"]] == ["rules:AGENTS.md:AGENTS.md"]
+
+
+class _FixedFindings:
+    """Reports the given findings against the first artifact, whatever it is."""
+
+    rule_id: RuleId = "ABOM-009"
+
+    def __init__(self, *findings: tuple[Severity, str, int | None]) -> None:
+        self._findings = findings
+
+    def run(self, artifacts: Sequence[Artifact]) -> Iterable[Finding]:
+        for severity, message, line in self._findings:
+            yield Finding(
+                rule_id="ABOM-009",
+                severity=severity,
+                confidence="low",
+                message=message,
+                location=Location(path=artifacts[0].source.path, line=line),
+                artifact_id=artifacts[0].id,
+                fix="do something else",
+            )
+
+
+def _with_findings(
+    monkeypatch: pytest.MonkeyPatch, *findings: tuple[Severity, str, int | None]
+) -> None:
+    monkeypatch.setattr(agentbom.rules, "RULES", (_FixedFindings(*findings),))
+
+
+def test_terminal_lists_findings_and_totals(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _with_findings(
+        monkeypatch,
+        ("medium", "second", 3),
+        ("high", "first\u202e", None),
+        ("low", "third", 12),
+    )
+    write_tree(tmp_path, {"AGENTS.md": "x"})
+    result = runner.invoke(app, ["scan", str(tmp_path)], env={"COLUMNS": "40"})
+    assert result.stdout.splitlines()[-4:] == [
+        "HIGH  ABOM-009  AGENTS.md  first\\u202e",
+        "MED   ABOM-009  AGENTS.md:3  second",
+        "LOW   ABOM-009  AGENTS.md:12  third",
+        "3 findings (1 high, 1 medium, 1 low).",
+    ]
+
+
+def test_terminal_total_for_one_finding(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    _with_findings(monkeypatch, ("medium", "m", None))
+    write_tree(tmp_path, {"AGENTS.md": "x"})
+    result = runner.invoke(app, ["scan", str(tmp_path)])
+    assert result.stdout.splitlines()[-1] == "1 finding (0 high, 1 medium, 0 low)."
+
+
+def test_json_lists_findings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    _with_findings(monkeypatch, ("medium", "m", 3))
+    write_tree(tmp_path, {"AGENTS.md": "x"})
+    result = runner.invoke(app, ["scan", str(tmp_path), "--format", "json"])
+    assert json.loads(result.stdout)["findings"] == [
+        {
+            "rule_id": "ABOM-009",
+            "severity": "medium",
+            "confidence": "low",
+            "message": "m",
+            "location": {"path": "AGENTS.md", "line": 3},
+            "artifact_id": "rules:AGENTS.md:AGENTS.md",
+            "fix": "do something else",
+        }
+    ]
+
+
+@pytest.mark.parametrize(
+    ("severity", "fail_on", "expected"),
+    [
+        (None, None, 0),
+        (None, "low", 0),
+        ("high", None, 1),
+        ("medium", None, 0),
+        ("medium", "high", 0),
+        ("medium", "medium", 1),
+        ("medium", "low", 1),
+        ("low", "medium", 0),
+        ("low", "low", 1),
+        ("high", "low", 1),
+    ],
+)
+@pytest.mark.parametrize("output_format", ["terminal", "json"])
+def test_exit_code_follows_fail_on(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    severity: Severity | None,
+    fail_on: str | None,
+    expected: int,
+    output_format: str,
+) -> None:
+    if severity is not None:
+        _with_findings(monkeypatch, (severity, "m", None))
+    write_tree(tmp_path, {"AGENTS.md": "x"})
+    args = ["scan", str(tmp_path), "--format", output_format]
+    if fail_on is not None:
+        args += ["--fail-on", fail_on]
+    assert runner.invoke(app, args).exit_code == expected
+
+
+def test_tool_error_outranks_findings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    _with_findings(monkeypatch, ("high", "m", None))
+    write_tree(tmp_path, {"AGENTS.md": "x", ".mcp.json": "{broken"})
+    for output_format in ("terminal", "json"):
+        args = ["scan", str(tmp_path), "--format", output_format, "--fail-on", "low"]
+        assert runner.invoke(app, args).exit_code == 2
+
+
+def test_fail_on_rejects_unknown_severity(tmp_path: Path) -> None:
+    result = runner.invoke(app, ["scan", str(tmp_path), "--fail-on", "critical"])
+    assert result.exit_code == 2
+    assert "critical" in result.stderr

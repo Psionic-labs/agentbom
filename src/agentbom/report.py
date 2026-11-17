@@ -8,16 +8,19 @@ from rich.text import Text
 
 from agentbom.models import (
     Artifact,
+    Finding,
     Hook,
     McpServer,
     RemoteLaunch,
     ScanResult,
     Script,
     Settings,
+    Severity,
     StdioLaunch,
 )
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+_SEVERITY_LABELS: dict[Severity, str] = {"high": "HIGH", "medium": "MED", "low": "LOW"}
 _INVISIBLE_CATEGORIES = frozenset({"Cc", "Cf", "Co", "Cs", "Zl", "Zp"})
 
 
@@ -26,6 +29,7 @@ def render_json(result: ScanResult) -> str:
         "schema_version": SCHEMA_VERSION,
         "artifacts": [_artifact_document(artifact) for artifact in result.artifacts],
         "errors": [error.model_dump(mode="json") for error in result.errors],
+        "findings": [finding.model_dump(mode="json") for finding in result.findings],
     }
     return json.dumps(document, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
@@ -87,10 +91,33 @@ def print_terminal(result: ScanResult, out: Console, err: Console) -> None:
                 )
             )
         out.print(table)
+    for finding in result.findings:
+        out.print(Text(_visible(finding_line(finding))), soft_wrap=True)
+    out.print(Text(findings_total(result)), soft_wrap=True)
     if result.errors:
         err.print(Text(f"{len(result.errors)} error(s):"))
         for error in result.errors:
             err.print(Text(_visible(f"{error.path}: {error.message}")))
+
+
+def finding_line(finding: Finding) -> str:
+    where = finding.location.path
+    if finding.location.line is not None:
+        where = f"{where}:{finding.location.line}"
+    return f"{_SEVERITY_LABELS[finding.severity]:<4}  {finding.rule_id}  {where}  {finding.message}"
+
+
+def findings_total(result: ScanResult) -> str:
+    if not result.findings:
+        return "No findings."
+    counts = dict.fromkeys(_SEVERITY_LABELS, 0)
+    for finding in result.findings:
+        counts[finding.severity] += 1
+    noun = "finding" if len(result.findings) == 1 else "findings"
+    return (
+        f"{len(result.findings)} {noun} "
+        f"({counts['high']} high, {counts['medium']} medium, {counts['low']} low)."
+    )
 
 
 def _detail(artifact: Artifact) -> str:

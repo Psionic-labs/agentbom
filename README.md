@@ -6,8 +6,9 @@ files for Claude Code, Cursor, VS Code,
 GitHub Copilot, Codex and `AGENTS.md`. It reads files and never runs them,
 and it makes no network calls.
 
-Today it has one command, `scan`, which prints an inventory. Detection
-rules, a lockfile and CI checks are not built yet.
+Today it has one command, `scan`, which prints an inventory and the
+findings of its detection rules. A lockfile and CI checks are not built
+yet.
 
 ## Install from source
 
@@ -23,12 +24,21 @@ uv run agentbom scan path/to/repo
 ## Usage
 
 ```sh
-agentbom scan [PATH] [--format terminal|json]
+agentbom scan [PATH] [--format terminal|json] [--fail-on high|medium|low]
 ```
 
 `PATH` defaults to the current directory. The terminal format prints a
-summary line and a table. The JSON format prints a document with
-`schema_version`, `artifacts` and `errors`.
+summary line, a table and one line per finding:
+
+```text
+MED   ABOM-005  .mcp.json  server "docs" runs npx package "docs-mcp" without an exact version
+1 finding (0 high, 1 medium, 0 low).
+```
+
+The JSON format prints a document with `schema_version` (2), `artifacts`,
+`errors` and `findings`. Each finding has a `rule_id`, `severity`,
+`confidence`, `message`, `location`, `artifact_id` and `fix`. Messages
+never quote a secret value.
 
 Both formats leave out secrets: MCP server `env` and `headers` and the
 settings `env` show their keys only. JSON output leaves out skill, rules
@@ -38,8 +48,10 @@ The scan skips `.git`, files and directories matched by `.gitignore`, and
 symlinks. Files larger than 2 MiB, files that are not UTF-8 and files that
 do not parse are reported as errors.
 
-Exit codes: `0` when the scan finished without errors, `2` when `PATH` is
-not a directory or any file could not be read or parsed.
+Exit codes: `2` when `PATH` is not a directory or any file could not be
+read or parsed, because a partial scan cannot be trusted; otherwise `1`
+when a finding has the `--fail-on` severity (default `high`) or higher;
+otherwise `0`.
 
 ## What it finds
 
