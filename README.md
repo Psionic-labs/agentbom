@@ -66,6 +66,15 @@ The patterns live in `src/agentbom/registry.py`.
 | Skills | `.claude/skills/*/SKILL.md` (at any depth), `.agents/skills/*/SKILL.md`, `.cursor/skills/*/SKILL.md`, `.github/skills/*/SKILL.md` |
 | Rules files | `AGENTS.md`, `CLAUDE.md`, `CLAUDE.local.md` (at any depth), `.claude/rules/**/*.md` (at any depth), `.claude/commands/**/*.md`, `.claude/agents/**/*.md`, `.cursorrules`, `.cursor/rules/**/*.mdc` (at any depth), `.github/copilot-instructions.md`, `.github/instructions/**/*.instructions.md`, `.github/prompts/**/*.prompt.md`, `.github/agents/**/*.md` |
 
+## Rules
+
+Each rule lives in `src/agentbom/rules/` and is proven by the malicious and
+benign cases under `fixtures/<RULE-ID>/`.
+
+| ID | Rule | Severity | Confidence |
+| --- | --- | --- | --- |
+| ABOM-005 | Unpinned server: an MCP server launched with `npx`, `bunx`, `npm exec`, `pnpm dlx`, `yarn dlx`, `uvx`, `uv tool run`, `pipx run`, `docker run` or `podman run` from a package without an exact version, a git source without a commit, or an image with no tag or `latest` | Medium | High |
+
 ## License
 
 Apache-2.0

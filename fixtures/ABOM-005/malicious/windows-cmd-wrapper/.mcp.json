@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "docs": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "docs-mcp"
+      ]
+    }
+  }
+}

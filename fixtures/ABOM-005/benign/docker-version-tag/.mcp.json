@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--name",
+        "fetch",
+        "mcp/fetch:1.2.0"
+      ]
+    }
+  }
+}

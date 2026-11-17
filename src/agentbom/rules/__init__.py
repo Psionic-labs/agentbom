@@ -2,6 +2,7 @@ from collections.abc import Iterable, Sequence
 from typing import Protocol
 
 from agentbom.models import SEVERITY_RANK, Artifact, Finding, RuleId
+from agentbom.rules.abom_005_unpinned import UnpinnedServer
 
 
 class Rule(Protocol):
@@ -11,7 +12,7 @@ class Rule(Protocol):
     def run(self, artifacts: Sequence[Artifact]) -> Iterable[Finding]: ...
 
 
-RULES: tuple[Rule, ...] = ()
+RULES: tuple[Rule, ...] = (UnpinnedServer(),)
 
 
 def run_rules(artifacts: Sequence[Artifact]) -> tuple[Finding, ...]:

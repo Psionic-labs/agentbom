@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "github:acme/mcp-tools#4f2c9d0a6b1e3f5a7c9e1b3d5f7a9c1e3b5d7f9a"
+      ]
+    }
+  }
+}

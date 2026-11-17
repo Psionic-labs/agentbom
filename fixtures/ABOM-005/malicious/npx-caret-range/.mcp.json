@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "docs": {
+      "command": "npx",
+      "args": [
+        "--yes",
+        "docs-mcp@^1.4.0"
+      ]
+    }
+  }
+}

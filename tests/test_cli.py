@@ -301,3 +301,21 @@ def test_fail_on_rejects_unknown_severity(tmp_path: Path) -> None:
     result = runner.invoke(app, ["scan", str(tmp_path), "--fail-on", "critical"])
     assert result.exit_code == 2
     assert "critical" in result.stderr
+
+
+def test_findings_never_quote_secret_values(tmp_path: Path) -> None:
+    servers = {
+        "gh": {"command": "npx", "args": ["-y", "gh-mcp"], "env": {"GH_TOKEN": SECRET}},
+        "img": {"command": "docker", "args": ["run", "-e", f"TOKEN={SECRET}", "img:latest"]},
+    }
+    write_tree(tmp_path, {**REPO, ".mcp.json": {"mcpServers": servers}})
+    as_json = runner.invoke(app, ["scan", str(tmp_path), "--format", "json"])
+    findings = json.loads(as_json.stdout)["findings"]
+    assert {f["artifact_id"] for f in findings} == {
+        "mcp_server:.mcp.json:gh",
+        "mcp_server:.mcp.json:img",
+    }
+    assert all(SECRET not in json.dumps(f) for f in findings)
+    terminal = runner.invoke(app, ["scan", str(tmp_path)], env={"COLUMNS": "200"})
+    assert "ABOM-005" in terminal.stdout
+    assert SECRET not in terminal.stdout
