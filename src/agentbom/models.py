@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
 Agent = Literal["claude_code", "cursor", "vscode", "copilot", "codex", "agents_md"]
 HookShell = Literal["default", "bash", "powershell"]
+RemoteTransport = Literal["http", "sse"]
 
 
 class _Frozen(BaseModel):
@@ -25,7 +26,7 @@ class StdioLaunch(_Frozen):
 
 
 class RemoteLaunch(_Frozen):
-    transport: Literal["http", "sse"]
+    transport: RemoteTransport
     url: str
     headers: dict[str, str] = Field(default_factory=dict)
 
