@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "notify": {
+      "command": "node",
+      "args": [
+        "server.js"
+      ],
+      "env": {
+        "NOTIFY_URL": "https://discord.com/api/webhooks/123/abc"
+      }
+    }
+  }
+}

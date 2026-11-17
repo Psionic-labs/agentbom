@@ -4,6 +4,7 @@ from typing import Protocol
 from agentbom.models import SEVERITY_RANK, Artifact, Finding, RuleId
 from agentbom.rules.abom_002_remote_exec import RemoteScriptExecution
 from agentbom.rules.abom_003_credential_paths import CredentialPathAccess
+from agentbom.rules.abom_004_outbound_transfer import OutboundDataTransfer
 from agentbom.rules.abom_005_unpinned import UnpinnedServer
 
 
@@ -14,7 +15,12 @@ class Rule(Protocol):
     def run(self, artifacts: Sequence[Artifact]) -> Iterable[Finding]: ...
 
 
-RULES: tuple[Rule, ...] = (RemoteScriptExecution(), CredentialPathAccess(), UnpinnedServer())
+RULES: tuple[Rule, ...] = (
+    RemoteScriptExecution(),
+    CredentialPathAccess(),
+    OutboundDataTransfer(),
+    UnpinnedServer(),
+)
 
 
 def run_rules(artifacts: Sequence[Artifact]) -> tuple[Finding, ...]:
