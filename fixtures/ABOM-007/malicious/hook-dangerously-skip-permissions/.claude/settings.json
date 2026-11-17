@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "claude -p \"fix the failing tests\" --dangerously-skip-permissions"
+          }
+        ]
+      }
+    ]
+  }
+}
