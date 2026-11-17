@@ -35,11 +35,13 @@ def test_mcp_stdio_and_remote_servers() -> None:
                     "headers": {"A": "b"},
                 },
                 "legacy": {"type": "sse", "url": "https://x/sse"},
+                "socket": {"type": "ws", "url": "wss://x/ws"},
                 "untyped": {"url": "https://x/u", "disabled": True},
             }
         }
     )
     servers = {s.name: s.launch for s in _servers(text)}
+    assert servers["socket"] == RemoteLaunch(transport="ws", url="wss://x/ws")
     assert servers["local"] == StdioLaunch(
         transport="stdio", command="npx", args=("-y", "pkg@1.0.0"), env={"K": "v"}
     )
@@ -57,7 +59,7 @@ def test_mcp_missing_servers_key_is_empty() -> None:
 @pytest.mark.parametrize(
     ("entry", "needle"),
     [
-        ({"type": "ws", "url": "wss://x"}, "'ws'"),
+        ({"type": "carrier-pigeon", "url": "wss://x"}, "'carrier-pigeon'"),
         ({"type": "stdio", "url": "https://x"}, "no command"),
         ({"args": ["x"]}, "neither a command nor a url"),
         ({"command": "npx", "args": "not-a-list"}, "args must be a list"),
@@ -75,6 +77,15 @@ def test_bad_mcp_entry_is_an_error_and_other_entries_still_parse(
     assert errors[0].path == ".mcp.json"
     assert "mcpServers.bad" in errors[0].message
     assert needle in errors[0].message
+
+
+def test_mcp_sdk_entries_are_not_loaded_from_files() -> None:
+    text = json.dumps(
+        {"mcpServers": {"inproc": {"type": "sdk", "name": "x"}, "good": {"command": "uvx"}}}
+    )
+    artifacts, errors = parse(text, ".mcp.json", "mcp_json", ("claude_code",))
+    assert [a.name for a in artifacts] == ["good"]
+    assert errors == []
 
 
 def test_mcp_top_level_must_be_an_object() -> None:

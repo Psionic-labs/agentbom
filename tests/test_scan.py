@@ -125,14 +125,16 @@ def test_malformed_file_is_an_error_and_other_files_still_inventory(tmp_path: Pa
         tmp_path,
         {
             ".mcp.json": "{not json",
-            ".cursor/mcp.json": {"mcpServers": {"bad": {"type": "ws", "url": "wss://x"}}},
+            ".cursor/mcp.json": {
+                "mcpServers": {"bad": {"type": "carrier-pigeon", "url": "wss://x"}}
+            },
             "AGENTS.md": "fine",
         },
     )
     result = scan(tmp_path)
     assert [a.source.path for a in result.artifacts] == ["AGENTS.md"]
     assert [e.path for e in result.errors] == [".cursor/mcp.json", ".mcp.json"]
-    assert "'ws'" in result.errors[0].message
+    assert "'carrier-pigeon'" in result.errors[0].message
     assert result.errors[1].message.startswith("invalid JSON")
 
 

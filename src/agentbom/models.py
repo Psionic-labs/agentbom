@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
 Agent = Literal["claude_code", "cursor", "vscode", "copilot", "codex", "agents_md"]
 HookShell = Literal["default", "bash", "powershell"]
-RemoteTransport = Literal["http", "sse"]
+RemoteTransport = Literal["http", "sse", "ws"]
 
 
 class _Frozen(BaseModel):

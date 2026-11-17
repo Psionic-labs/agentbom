@@ -26,6 +26,7 @@ _REMOTE_TRANSPORTS: dict[str | None, RemoteTransport] = {
     "streamable-http": "http",
     "streamableHttp": "http",
     "sse": "sse",
+    "ws": "ws",
 }
 
 
@@ -62,11 +63,16 @@ def _parse_servers(
         except ShapeError as error:
             yield ScanError(path=path, message=str(error))
             continue
+        if launch is None:
+            continue
         yield McpServer(name=name, source=Location(path=path), agents=agents, launch=launch)
 
 
-def _launch(entry: object, where: str) -> StdioLaunch | RemoteLaunch:
+def _launch(entry: object, where: str) -> StdioLaunch | RemoteLaunch | None:
     fields = as_object(entry, where)
+    if fields.get("type") == "sdk":
+        # Claude Code skips sdk entries in config files; only the SDK host can register them.
+        return None
     if "command" in fields:
         return StdioLaunch(
             transport="stdio",
