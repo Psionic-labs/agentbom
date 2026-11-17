@@ -6,6 +6,7 @@ from agentbom.rules.abom_001_hidden_unicode import HiddenUnicode
 from agentbom.rules.abom_005_unpinned import UnpinnedServer
 from agentbom.rules.abom_007_permissions import OverBroadPermissions
 from agentbom.rules.abom_009_instruction_override import InstructionOverride
+from agentbom.rules.abom_010_secrets import EmbeddedSecrets
 
 
 class Rule(Protocol):
@@ -20,6 +21,7 @@ RULES: tuple[Rule, ...] = (
     UnpinnedServer(),
     OverBroadPermissions(),
     InstructionOverride(),
+    EmbeddedSecrets(),
 )
 
 

@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "issues": {
+      "type": "http",
+      "url": "https://mcp.issues.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer 8f3a1c9e7b2d4f60a5c3e1b9d7f2a4c6"
+      }
+    }
+  }
+}

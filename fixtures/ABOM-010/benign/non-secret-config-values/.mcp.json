@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github@2025.4.8"
+      ],
+      "env": {
+        "AUTH_URL": "https://auth.company.io/oauth2/token",
+        "GITHUB_TOKEN_FILE": "/run/secrets/gh_token2",
+        "AUTH_MODE": "client-credentials-v2",
+        "GIT_AUTHOR_NAME": "Jane Q. Developer 2nd",
+        "MAX_TOKENS": "4096",
+        "TOKEN_AUDIENCE": "api.internal.company.io"
+      }
+    }
+  }
+}

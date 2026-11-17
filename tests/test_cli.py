@@ -38,10 +38,27 @@ REPO: dict[str, str | dict[str, object]] = {
 def test_json_output(tmp_path: Path) -> None:
     write_tree(tmp_path, REPO)
     result = runner.invoke(app, ["scan", str(tmp_path), "--format", "json"])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == 1, result.output
     document = json.loads(result.stdout)
     assert document["schema_version"] == 2
-    assert document["findings"] == []
+    assert [(f["rule_id"], f["artifact_id"], f["message"]) for f in document["findings"]] == [
+        (
+            "ABOM-010",
+            "settings:.claude/settings.json:.claude/settings.json",
+            "env.GH_TOKEN looks like a hard-coded secret",
+        ),
+        (
+            "ABOM-010",
+            "script:.claude/skills/a/scripts/setup.sh:.claude/skills/a/scripts/setup.sh",
+            "body looks like a hard-coded secret (GH_TOKEN)",
+        ),
+        ("ABOM-010", "mcp_server:.mcp.json:gh", "env.GH_TOKEN looks like a hard-coded secret"),
+        (
+            "ABOM-010",
+            "mcp_server:.mcp.json:docs",
+            "headers.Authorization looks like a hard-coded secret",
+        ),
+    ]
     assert document["errors"] == []
     by_id = {a["id"]: a for a in document["artifacts"]}
     assert list(by_id) == [
@@ -105,7 +122,7 @@ def test_json_output_is_byte_identical_across_runs(tmp_path: Path) -> None:
 def test_terminal_output(tmp_path: Path) -> None:
     write_tree(tmp_path, REPO)
     result = runner.invoke(app, ["scan", str(tmp_path)], env={"COLUMNS": "200"})
-    assert result.exit_code == 0
+    assert result.exit_code == 1
     lines = result.stdout.splitlines()
     assert (
         lines[0]
@@ -312,9 +329,13 @@ def test_findings_never_quote_secret_values(tmp_path: Path) -> None:
     write_tree(tmp_path, {**REPO, ".mcp.json": {"mcpServers": servers}})
     as_json = runner.invoke(app, ["scan", str(tmp_path), "--format", "json"])
     findings = json.loads(as_json.stdout)["findings"]
-    assert {f["artifact_id"] for f in findings} == {
-        "mcp_server:.mcp.json:gh",
-        "mcp_server:.mcp.json:img",
+    assert {(f["rule_id"], f["artifact_id"]) for f in findings} == {
+        ("ABOM-005", "mcp_server:.mcp.json:gh"),
+        ("ABOM-005", "mcp_server:.mcp.json:img"),
+        ("ABOM-010", "mcp_server:.mcp.json:gh"),
+        ("ABOM-010", "mcp_server:.mcp.json:img"),
+        ("ABOM-010", "script:.claude/skills/a/scripts/setup.sh:.claude/skills/a/scripts/setup.sh"),
+        ("ABOM-010", "settings:.claude/settings.json:.claude/settings.json"),
     }
     assert all(SECRET not in json.dumps(f) for f in findings)
     terminal = runner.invoke(app, ["scan", str(tmp_path)], env={"COLUMNS": "200"})
