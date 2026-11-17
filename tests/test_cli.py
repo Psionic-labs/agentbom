@@ -138,7 +138,8 @@ def test_terminal_escapes_control_and_bidi_characters(tmp_path: Path) -> None:
     name = "evil\x1b[31m\u202e"
     write_tree(tmp_path, {".mcp.json": {"mcpServers": {name: {"command": "x\x07"}}}})
     result = runner.invoke(app, ["scan", str(tmp_path)])
-    assert result.exit_code == 0
+    assert result.exit_code == 1
+    assert "ABOM-001" in result.stdout
     assert "\x1b" not in result.stdout
     assert "\u202e" not in result.stdout
     assert "\x07" not in result.stdout
