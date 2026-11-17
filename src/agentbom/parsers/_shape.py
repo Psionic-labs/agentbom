@@ -20,7 +20,7 @@ def load_json(text: str) -> Any:
         return json.loads(text)
     except json.JSONDecodeError as error:
         raise ShapeError(
-            f"invalid JSON: {error.msg} at line {error.lineno} column {error.colno}"
+            f"invalid JSON: {error.msg} (line {error.lineno}, column {error.colno})"
         ) from error
     except RecursionError as error:
         raise ShapeError("invalid JSON: nesting too deep") from error
