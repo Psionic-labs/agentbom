@@ -307,3 +307,37 @@ def test_rules_starting_with_text_keep_later_rules_in_body() -> None:
     rule = _markdown(text, "CLAUDE.md", "rules_md")
     assert rule.frontmatter == {}
     assert rule.body == text
+
+
+def test_cursor_mdc_reads_unquoted_globs_like_cursor() -> None:
+    text = "---\ndescription: Rules for .mdc files\nglobs: *.mdc\nalwaysApply: false\n---\n# Body\n"
+    rule = _markdown(text, ".cursor/rules/mdc-files.mdc", "cursor_mdc")
+    assert rule.frontmatter == {
+        "description": "Rules for .mdc files",
+        "globs": "*.mdc",
+        "alwaysApply": False,
+    }
+    assert rule.body == "# Body\n"
+
+
+def test_cursor_mdc_prefers_yaml_when_it_parses() -> None:
+    text = "---\nglobs:\n  - '*.ts'\n  - '*.tsx'\nalwaysApply: true\n---\n"
+    rule = _markdown(text, ".cursor/rules/ts.mdc", "cursor_mdc")
+    assert rule.frontmatter == {"globs": ["*.ts", "*.tsx"], "alwaysApply": True}
+
+
+def test_cursor_mdc_that_is_neither_yaml_nor_flat_is_an_error() -> None:
+    text = "---\nglobs: *.ts\n  - nested\n---\n"
+    artifacts, errors = parse(text, ".cursor/rules/x.mdc", "cursor_mdc", ("cursor",))
+    assert artifacts == []
+    assert len(errors) == 1
+    assert errors[0].message.startswith("invalid YAML frontmatter")
+    assert errors[0].message.endswith("at line 2")
+
+
+def test_other_rules_files_need_valid_yaml_frontmatter() -> None:
+    artifacts, errors = parse(
+        "---\npaths: *.ts\n---\n", ".claude/rules/x.md", "rules_md", ("vscode",)
+    )
+    assert artifacts == []
+    assert len(errors) == 1

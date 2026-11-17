@@ -14,6 +14,7 @@ Format = Literal[
     "copilot_hooks_json",
     "skill_md",
     "rules_md",
+    "cursor_mdc",
 ]
 
 
@@ -50,7 +51,7 @@ REGISTRY: tuple[SourcePattern, ...] = (
     SourcePattern("**/CLAUDE.md", "rules_md", ("claude_code",)),
     SourcePattern("**/CLAUDE.local.md", "rules_md", ("claude_code",)),
     SourcePattern(".cursorrules", "rules_md", ("cursor",)),
-    SourcePattern("**/.cursor/rules/**/*.mdc", "rules_md", ("cursor",)),
+    SourcePattern("**/.cursor/rules/**/*.mdc", "cursor_mdc", ("cursor",)),
     SourcePattern(".github/copilot-instructions.md", "rules_md", ("copilot",)),
     SourcePattern(".github/instructions/**/*.instructions.md", "rules_md", ("copilot",)),
     SourcePattern(".github/prompts/**/*.prompt.md", "rules_md", ("vscode",)),

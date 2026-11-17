@@ -7,7 +7,7 @@ from agentbom.parsers.hooks import (
     parse_cursor_hooks_json,
     parse_nested_hooks_json,
 )
-from agentbom.parsers.markdown import parse_rules_md, parse_skill_md
+from agentbom.parsers.markdown import parse_cursor_mdc, parse_rules_md, parse_skill_md
 from agentbom.parsers.mcp import parse_mcp_json, parse_vscode_mcp_json
 from agentbom.registry import Format
 
@@ -30,6 +30,8 @@ def parser_for(format: Format) -> ParseFn:
             return parse_skill_md
         case "rules_md":
             return parse_rules_md
+        case "cursor_mdc":
+            return parse_cursor_mdc
         case _:
             assert_never(format)
 
