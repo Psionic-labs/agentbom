@@ -14,6 +14,11 @@
       "name": "CLAUDE.md"
     },
     {
+      "kind": "settings",
+      "path": ".claude/settings.json",
+      "name": ".claude/settings.json"
+    },
+    {
       "kind": "skill",
       "path": ".claude/skills/conventional-commit-message/SKILL.md",
       "name": "conventional-commit-message"

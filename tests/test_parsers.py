@@ -3,7 +3,18 @@ from typing import get_args
 
 import pytest
 
-from agentbom.models import Hook, McpServer, RemoteLaunch, Rules, Skill, StdioLaunch
+from agentbom.models import (
+    Hook,
+    Location,
+    McpServer,
+    RemoteLaunch,
+    Rules,
+    Script,
+    ScriptLanguage,
+    Settings,
+    Skill,
+    StdioLaunch,
+)
 from agentbom.parsers import parse, parser_for
 from agentbom.registry import Format
 
@@ -228,6 +239,133 @@ def test_copilot_hooks_keep_each_shell() -> None:
     (hook,) = _hooks(text, "copilot_hooks_json")
     assert hook.name == "preToolUse[0]"
     assert hook.commands == {"bash": "./a.sh", "powershell": ".\\a.ps1"}
+
+
+def test_claude_settings_yield_hooks_and_one_settings_artifact() -> None:
+    text = json.dumps(
+        {
+            "$schema": "https://json.schemastore.org/claude-code-settings.json",
+            "permissions": {
+                "allow": ["Bash(npm run test:*)", "Read"],
+                "deny": ["Read(./.env)"],
+                "ask": ["Bash(git push:*)"],
+                "defaultMode": "acceptEdits",
+                "additionalDirectories": ["../shared"],
+                "unknownKey": 1,
+            },
+            "enableAllProjectMcpServers": False,
+            "env": {"FOO": "bar"},
+            "hooks": {"Stop": [{"hooks": [{"command": "x.sh"}]}]},
+        }
+    )
+    artifacts, errors = parse(text, ".claude/settings.json", "claude_settings_json", ("cursor",))
+    assert errors == []
+    hook, settings = artifacts
+    assert isinstance(hook, Hook)
+    assert hook.commands == {"default": "x.sh"}
+    assert settings == Settings(
+        name=".claude/settings.json",
+        source=Location(path=".claude/settings.json"),
+        agents=("cursor",),
+        allow=("Bash(npm run test:*)", "Read"),
+        deny=("Read(./.env)",),
+        ask=("Bash(git push:*)",),
+        default_mode="acceptEdits",
+        additional_directories=("../shared",),
+        enable_all_project_mcp_servers=False,
+        env={"FOO": "bar"},
+    )
+
+
+def test_claude_settings_without_permissions_is_an_empty_settings_artifact() -> None:
+    artifacts, errors = parse("{}", ".claude/settings.local.json", "claude_settings_json", ())
+    assert errors == []
+    (settings,) = artifacts
+    assert isinstance(settings, Settings)
+    assert (settings.allow, settings.default_mode, settings.env) == ((), None, {})
+    assert settings.enable_all_project_mcp_servers is None
+
+
+@pytest.mark.parametrize(
+    ("document", "needle"),
+    [
+        ({"env": {"MAX_TOKENS": 1000}}, "env.MAX_TOKENS must be a string"),
+        ({"permissions": ["Bash"]}, "permissions must be an object"),
+        ({"permissions": {"allow": "Bash"}}, "permissions.allow must be a list"),
+        ({"permissions": {"defaultMode": 1}}, "permissions.defaultMode must be a string"),
+        ({"enableAllProjectMcpServers": "yes"}, "enableAllProjectMcpServers must be true or false"),
+    ],
+)
+def test_bad_settings_field_is_an_error_and_hooks_still_parse(
+    document: dict[str, object], needle: str
+) -> None:
+    document["hooks"] = {"Stop": [{"hooks": [{"command": "x.sh"}]}]}
+    artifacts, errors = parse(
+        json.dumps(document), ".claude/settings.json", "claude_settings_json", ()
+    )
+    assert [a.kind for a in artifacts] == ["hook"]
+    assert [e.message for e in errors] == [needle]
+
+
+def test_claude_settings_invalid_json_is_one_error() -> None:
+    artifacts, errors = parse("{oops", ".claude/settings.json", "claude_settings_json", ())
+    assert artifacts == []
+    assert len(errors) == 1
+    assert errors[0].message.startswith("invalid JSON")
+
+
+def test_codex_hooks_have_no_settings_artifact() -> None:
+    text = json.dumps({"permissions": {"allow": ["Bash"]}, "hooks": {}})
+    assert parse(text, ".codex/hooks.json", "nested_hooks_json", ("codex",)) == ([], [])
+
+
+@pytest.mark.parametrize(
+    ("path", "language"),
+    [
+        (".claude/hooks/a.sh", "shell"),
+        (".claude/hooks/a.psm1", "powershell"),
+        (".claude/skills/s/x.py", "python"),
+        (".cursor/hooks/a.cjs", "javascript"),
+        (".codex/hooks/a.mts", "typescript"),
+        (".github/hooks/a.cmd", "batch"),
+    ],
+)
+def test_script_language_comes_from_the_extension(path: str, language: ScriptLanguage) -> None:
+    body = "#!/bin/sh\necho hi\n"
+    artifacts, errors = parse(body, path, "script", ("codex",))
+    assert errors == []
+    assert artifacts == [
+        Script(
+            name=path,
+            source=Location(path=path, line=1),
+            agents=("codex",),
+            language=language,
+            body=body,
+        )
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "path", "format", "body_line"),
+    [
+        ("# No frontmatter\n", ".claude/skills/s/SKILL.md", "skill_md", 1),
+        ("---\nname: s\ndescription: d\n---\n# Body\n", ".claude/skills/s/SKILL.md", "skill_md", 5),
+        ("---\n---\nbody", "AGENTS.md", "rules_md", 3),
+        ("# Title\n---\nnot: frontmatter\n---\n", "CLAUDE.md", "rules_md", 1),
+        (
+            "---\nglobs: *.ts\nalwaysApply: true\n---\nbody\n",
+            ".cursor/rules/a.mdc",
+            "cursor_mdc",
+            5,
+        ),
+    ],
+)
+def test_body_line_is_the_file_line_where_the_body_starts(
+    text: str, path: str, format: Format, body_line: int
+) -> None:
+    artifact = _markdown(text, path, format)
+    assert artifact.body_line == body_line
+    assert text.split("\n")[body_line - 1 :] == artifact.body.split("\n")
 
 
 def _markdown(text: str, path: str, format: Format) -> Skill | Rules:

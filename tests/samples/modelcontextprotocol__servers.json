@@ -24,6 +24,11 @@
       "name": "src/everything/AGENTS.md"
     },
     {
+      "kind": "settings",
+      "path": ".claude/settings.json",
+      "name": ".claude/settings.json"
+    },
+    {
       "kind": "skill",
       "path": ".claude/skills/board-ops/SKILL.md",
       "name": "board-ops"

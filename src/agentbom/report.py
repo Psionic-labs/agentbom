@@ -6,7 +6,16 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from agentbom.models import Artifact, Hook, McpServer, RemoteLaunch, ScanResult, StdioLaunch
+from agentbom.models import (
+    Artifact,
+    Hook,
+    McpServer,
+    RemoteLaunch,
+    ScanResult,
+    Script,
+    Settings,
+    StdioLaunch,
+)
 
 SCHEMA_VERSION = 1
 _INVISIBLE_CATEGORIES = frozenset({"Cc", "Cf", "Co", "Cs", "Zl", "Zp"})
@@ -30,6 +39,9 @@ def _artifact_document(artifact: Artifact) -> dict[str, Any]:
         case McpServer(launch=RemoteLaunch() as launch):
             document = artifact.model_dump(mode="json", exclude={"launch": {"headers"}})
             document["launch"]["header_keys"] = sorted(launch.headers)
+        case Settings(env=env):
+            document = artifact.model_dump(mode="json", exclude={"env"})
+            document["env_keys"] = sorted(env)
         case Hook():
             document = artifact.model_dump(mode="json")
         case _:
@@ -40,7 +52,7 @@ def _artifact_document(artifact: Artifact) -> dict[str, Any]:
 
 
 def summary_line(result: ScanResult) -> str:
-    counts = dict.fromkeys(("mcp_server", "skill", "hook", "rules"), 0)
+    counts = dict.fromkeys(("mcp_server", "skill", "hook", "rules", "script", "settings"), 0)
     for artifact in result.artifacts:
         counts[artifact.kind] += 1
     return "Found: " + ", ".join(
@@ -49,12 +61,14 @@ def summary_line(result: ScanResult) -> str:
             _count(counts["skill"], "skill"),
             _count(counts["hook"], "hook"),
             _count(counts["rules"], "rules file"),
+            _count(counts["script"], "script"),
+            _count(counts["settings"], "settings file"),
         ]
     )
 
 
 def print_terminal(result: ScanResult, out: Console, err: Console) -> None:
-    out.print(Text(summary_line(result)))
+    out.print(Text(summary_line(result)), soft_wrap=True)
     if result.artifacts:
         table = Table()
         for header in ("Kind", "Name", "Path", "Agents", "Detail"):
@@ -87,6 +101,8 @@ def _detail(artifact: Artifact) -> str:
             return url
         case Hook(commands=commands, url=url, handler_type=handler_type):
             return next(iter(commands.values()), url or handler_type)
+        case Script(language=language):
+            return language
         case _:
             return ""
 

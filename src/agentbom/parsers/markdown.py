@@ -15,7 +15,7 @@ _FLAT_SCALARS: dict[str, JsonValue] = {"": None, "true": True, "false": False}
 
 def parse_skill_md(text: str, path: str, agents: tuple[Agent, ...]) -> Iterator[Skill | ScanError]:
     try:
-        frontmatter, body = _split_frontmatter(text, flat_fallback=False)
+        frontmatter, body, body_line = _split_frontmatter(text, flat_fallback=False)
     except ShapeError as error:
         yield ScanError(path=path, message=str(error))
         return
@@ -30,6 +30,7 @@ def parse_skill_md(text: str, path: str, agents: tuple[Agent, ...]) -> Iterator[
         description=description if isinstance(description, str) else None,
         frontmatter=frontmatter,
         body=body,
+        body_line=body_line,
     )
 
 
@@ -49,7 +50,7 @@ def _rules(
     text: str, path: str, agents: tuple[Agent, ...], *, flat_fallback: bool
 ) -> Rules | ScanError:
     try:
-        frontmatter, body = _split_frontmatter(text, flat_fallback=flat_fallback)
+        frontmatter, body, body_line = _split_frontmatter(text, flat_fallback=flat_fallback)
     except ShapeError as error:
         return ScanError(path=path, message=str(error))
     return Rules(
@@ -58,24 +59,26 @@ def _rules(
         agents=agents,
         frontmatter=frontmatter,
         body=body,
+        body_line=body_line,
     )
 
 
-def _split_frontmatter(text: str, *, flat_fallback: bool) -> tuple[dict[str, JsonValue], str]:
+def _split_frontmatter(text: str, *, flat_fallback: bool) -> tuple[dict[str, JsonValue], str, int]:
+    """Return the frontmatter, the body, and the 1-based file line the body starts on."""
     lines = text.split("\n")
     if lines[0].rstrip(" \t") != _DELIMITER:
-        return {}, text
+        return {}, text, 1
     closing = next((i for i in range(1, len(lines)) if lines[i].rstrip(" \t") == _DELIMITER), None)
     if closing is None:
         raise ShapeError("frontmatter has no closing --- line")
-    header, body = lines[1:closing], "\n".join(lines[closing + 1 :])
+    header, body, body_line = lines[1:closing], "\n".join(lines[closing + 1 :]), closing + 2
     try:
-        return _yaml_mapping(header), body
+        return _yaml_mapping(header), body, body_line
     except ShapeError:
         flat = _flat_mapping(header) if flat_fallback else None
         if flat is None:
             raise
-        return flat, body
+        return flat, body, body_line
 
 
 def _yaml_mapping(lines: list[str]) -> dict[str, JsonValue]:

@@ -21,9 +21,20 @@ _COPILOT_SHELLS: Mapping[str, HookShell] = {
 def parse_nested_hooks_json(
     text: str, path: str, agents: tuple[Agent, ...]
 ) -> Iterator[Hook | ScanError]:
+    try:
+        document = document_object(text)
+    except ShapeError as error:
+        yield ScanError(path=path, message=str(error))
+        return
+    yield from nested_hooks(document, path, agents)
+
+
+def nested_hooks(
+    document: dict[str, object], path: str, agents: tuple[Agent, ...]
+) -> Iterator[Hook | ScanError]:
     """Claude Code and Codex: event -> matcher groups -> handlers."""
     try:
-        events = _events(text)
+        events = _events(document)
     except ShapeError as error:
         yield ScanError(path=path, message=str(error))
         return
@@ -70,7 +81,7 @@ def _flat_hooks(
 ) -> Iterator[Hook | ScanError]:
     """Cursor and Copilot: event -> handlers, each handler carrying its own matcher."""
     try:
-        events = _events(text)
+        events = _events(document_object(text))
     except ShapeError as error:
         yield ScanError(path=path, message=str(error))
         return
@@ -92,8 +103,11 @@ def _flat_hooks(
             yield hook
 
 
-def _events(text: str) -> dict[str, object]:
-    document = as_object(load_json(text), "top level")
+def document_object(text: str) -> dict[str, object]:
+    return as_object(load_json(text), "top level")
+
+
+def _events(document: dict[str, object]) -> dict[str, object]:
     return as_object(document.get("hooks", {}), "hooks")
 
 

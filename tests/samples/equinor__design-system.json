@@ -225,6 +225,31 @@
       "name": "packages/eds-tokens/CLAUDE.md"
     },
     {
+      "kind": "script",
+      "path": ".claude/hooks/format_hook.js",
+      "name": ".claude/hooks/format_hook.js"
+    },
+    {
+      "kind": "script",
+      "path": ".claude/hooks/read_hook.js",
+      "name": ".claude/hooks/read_hook.js"
+    },
+    {
+      "kind": "script",
+      "path": ".github/hooks/block-secrets.js",
+      "name": ".github/hooks/block-secrets.js"
+    },
+    {
+      "kind": "script",
+      "path": ".github/hooks/format-on-edit.js",
+      "name": ".github/hooks/format-on-edit.js"
+    },
+    {
+      "kind": "settings",
+      "path": ".claude/settings.json",
+      "name": ".claude/settings.json"
+    },
+    {
       "kind": "skill",
       "path": ".claude/skills/review-pr/SKILL.md",
       "name": "review-pr"

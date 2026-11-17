@@ -1,7 +1,8 @@
 # agentbom
 
 agentbom lists the agent context a repository loads: MCP servers, skills,
-hooks and rules or instruction files for Claude Code, Cursor, VS Code,
+hooks, the scripts they run, project settings and rules or instruction
+files for Claude Code, Cursor, VS Code,
 GitHub Copilot, Codex and `AGENTS.md`. It reads files and never runs them,
 and it makes no network calls.
 
@@ -29,9 +30,9 @@ agentbom scan [PATH] [--format terminal|json]
 summary line and a table. The JSON format prints a document with
 `schema_version`, `artifacts` and `errors`.
 
-Both formats leave out secrets: MCP server `env` and `headers` show their
-keys only. JSON output leaves out skill and rules bodies and gives each
-artifact a `content_hash` instead.
+Both formats leave out secrets: MCP server `env` and `headers` and the
+settings `env` show their keys only. JSON output leaves out skill, rules
+and script bodies and gives each artifact a `content_hash` instead.
 
 The scan skips `.git`, files and directories matched by `.gitignore`, and
 symlinks. Files larger than 2 MiB, files that are not UTF-8 and files that
@@ -48,6 +49,8 @@ The patterns live in `src/agentbom/registry.py`.
 | --- | --- |
 | MCP servers | `.mcp.json`, `.cursor/mcp.json`, `.vscode/mcp.json` |
 | Hooks | `.claude/settings.json`, `.claude/settings.local.json`, `.codex/hooks.json`, `.cursor/hooks.json`, `.github/hooks/*.json` |
+| Settings | `.claude/settings.json`, `.claude/settings.local.json` (permissions, `enableAllProjectMcpServers`, `env`) |
+| Scripts | Shell, PowerShell, Python, JavaScript, TypeScript, Ruby, Perl and batch files under `.claude/hooks/`, `.cursor/hooks/`, `.codex/hooks/`, `.github/hooks/` and inside any skill directory listed below |
 | Skills | `.claude/skills/*/SKILL.md` (at any depth), `.agents/skills/*/SKILL.md`, `.cursor/skills/*/SKILL.md`, `.github/skills/*/SKILL.md` |
 | Rules files | `AGENTS.md`, `CLAUDE.md`, `CLAUDE.local.md` (at any depth), `.claude/rules/**/*.md` (at any depth), `.claude/commands/**/*.md`, `.claude/agents/**/*.md`, `.cursorrules`, `.cursor/rules/**/*.mdc` (at any depth), `.github/copilot-instructions.md`, `.github/instructions/**/*.instructions.md`, `.github/prompts/**/*.prompt.md`, `.github/agents/**/*.md` |
 

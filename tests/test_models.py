@@ -10,6 +10,7 @@ def _rules(path: str, body: str) -> Rules:
         agents=("agents_md",),
         frontmatter={},
         body=body,
+        body_line=1,
     )
 
 
@@ -29,7 +30,7 @@ def test_content_hash_is_sha256_of_canonical_content_json() -> None:
     assert _rules("AGENTS.md", "Be nice.\n").content_hash == expected
 
 
-def test_content_hash_ignores_location_and_agents() -> None:
+def test_content_hash_ignores_location_agents_and_body_line() -> None:
     a = _rules("AGENTS.md", "x")
     b = Rules(
         name="AGENTS.md",
@@ -37,6 +38,7 @@ def test_content_hash_ignores_location_and_agents() -> None:
         agents=("cursor", "codex"),
         frontmatter={},
         body="x",
+        body_line=4,
     )
     assert a.content_hash == b.content_hash
 

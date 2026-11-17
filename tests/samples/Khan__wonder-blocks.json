@@ -141,6 +141,96 @@
       "name": "CLAUDE.md"
     },
     {
+      "kind": "script",
+      "path": ".claude/hooks/echo-banner-filter.mjs",
+      "name": ".claude/hooks/echo-banner-filter.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".claude/hooks/gh-filter.mjs",
+      "name": ".claude/hooks/gh-filter.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".claude/hooks/gh-install.mjs",
+      "name": ".claude/hooks/gh-install.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".claude/hooks/git-filter.mjs",
+      "name": ".claude/hooks/git-filter.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".claude/hooks/git-token-init.mjs",
+      "name": ".claude/hooks/git-token-init.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".claude/hooks/pnpm-install.mjs",
+      "name": ".claude/hooks/pnpm-install.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".codex/hooks/gh-filter.mjs",
+      "name": ".codex/hooks/gh-filter.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".codex/hooks/gh-install.mjs",
+      "name": ".codex/hooks/gh-install.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".codex/hooks/git-filter.mjs",
+      "name": ".codex/hooks/git-filter.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".codex/hooks/git-token-init.mjs",
+      "name": ".codex/hooks/git-token-init.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".codex/hooks/pnpm-install.mjs",
+      "name": ".codex/hooks/pnpm-install.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".cursor/hooks/gh-filter.mjs",
+      "name": ".cursor/hooks/gh-filter.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".cursor/hooks/gh-install.mjs",
+      "name": ".cursor/hooks/gh-install.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".cursor/hooks/git-filter.mjs",
+      "name": ".cursor/hooks/git-filter.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".cursor/hooks/git-token-init.mjs",
+      "name": ".cursor/hooks/git-token-init.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".cursor/hooks/inject-shell-env.mjs",
+      "name": ".cursor/hooks/inject-shell-env.mjs"
+    },
+    {
+      "kind": "script",
+      "path": ".cursor/hooks/pnpm-install.mjs",
+      "name": ".cursor/hooks/pnpm-install.mjs"
+    },
+    {
+      "kind": "settings",
+      "path": ".claude/settings.json",
+      "name": ".claude/settings.json"
+    },
+    {
       "kind": "skill",
       "path": ".agents/skills/component-spec/SKILL.md",
       "name": "component-spec"

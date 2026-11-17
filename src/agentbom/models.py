@@ -7,6 +7,9 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue
 Agent = Literal["claude_code", "cursor", "vscode", "copilot", "codex", "agents_md"]
 HookShell = Literal["default", "bash", "powershell"]
 RemoteTransport = Literal["http", "sse", "ws"]
+ScriptLanguage = Literal[
+    "shell", "powershell", "python", "javascript", "typescript", "ruby", "perl", "batch"
+]
 
 
 class _Frozen(BaseModel):
@@ -43,7 +46,7 @@ class _ArtifactBase(_Frozen):
 
     @property
     def content_hash(self) -> str:
-        content = self.model_dump(mode="json", exclude={"source", "agents"})
+        content = self.model_dump(mode="json", exclude={"source", "agents", "body_line"})
         canonical = json.dumps(content, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
@@ -67,15 +70,36 @@ class Skill(_ArtifactBase):
     description: str | None
     frontmatter: dict[str, JsonValue]
     body: str
+    body_line: int
 
 
 class Rules(_ArtifactBase):
     kind: Literal["rules"] = "rules"
     frontmatter: dict[str, JsonValue]
     body: str
+    body_line: int
 
 
-Artifact = Annotated[McpServer | Hook | Skill | Rules, Field(discriminator="kind")]
+class Script(_ArtifactBase):
+    kind: Literal["script"] = "script"
+    language: ScriptLanguage
+    body: str
+
+
+class Settings(_ArtifactBase):
+    kind: Literal["settings"] = "settings"
+    allow: tuple[str, ...] = ()
+    deny: tuple[str, ...] = ()
+    ask: tuple[str, ...] = ()
+    default_mode: str | None = None
+    additional_directories: tuple[str, ...] = ()
+    enable_all_project_mcp_servers: bool | None = None
+    env: dict[str, str] = Field(default_factory=dict)
+
+
+Artifact = Annotated[
+    McpServer | Hook | Skill | Rules | Script | Settings, Field(discriminator="kind")
+]
 
 
 class ScanError(_Frozen):
