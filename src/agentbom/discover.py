@@ -1,6 +1,7 @@
 import codecs
 import os
 import stat
+import sys
 from dataclasses import dataclass
 from pathlib import Path, PurePath
 
@@ -118,9 +119,12 @@ def _is_link(path: Path) -> bool:
         info = path.lstat()
     except OSError:
         return False
-    # Windows junctions are not symlinks to Python 3.11, yet os.walk follows them.
-    reparse_tag = getattr(info, "st_reparse_tag", 0)
-    return stat.S_ISLNK(info.st_mode) or reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT
+    if stat.S_ISLNK(info.st_mode):
+        return True
+    if sys.platform == "win32":
+        # Windows junctions are not symlinks to Python 3.11, yet os.walk follows them.
+        return info.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT
+    return False
 
 
 def _join(directory: str, name: str) -> str:
