@@ -5,6 +5,7 @@ from agentbom.models import SEVERITY_RANK, Artifact, Finding, RuleId
 from agentbom.rules.abom_001_hidden_unicode import HiddenUnicode
 from agentbom.rules.abom_005_unpinned import UnpinnedServer
 from agentbom.rules.abom_007_permissions import OverBroadPermissions
+from agentbom.rules.abom_009_instruction_override import InstructionOverride
 
 
 class Rule(Protocol):
@@ -14,7 +15,12 @@ class Rule(Protocol):
     def run(self, artifacts: Sequence[Artifact]) -> Iterable[Finding]: ...
 
 
-RULES: tuple[Rule, ...] = (HiddenUnicode(), UnpinnedServer(), OverBroadPermissions())
+RULES: tuple[Rule, ...] = (
+    HiddenUnicode(),
+    UnpinnedServer(),
+    OverBroadPermissions(),
+    InstructionOverride(),
+)
 
 
 def run_rules(artifacts: Sequence[Artifact]) -> tuple[Finding, ...]:
