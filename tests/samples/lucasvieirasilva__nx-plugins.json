@@ -1,0 +1,32 @@
+{
+  "repo": "lucasvieirasilva/nx-plugins",
+  "sha": "e7629956ef002613c4df31ae5aa1fe5a2b13c227",
+  "artifacts": [
+    {
+      "kind": "mcp_server",
+      "path": ".cursor/mcp.json",
+      "name": "nx-mcp",
+      "transport": "http"
+    },
+    {
+      "kind": "rules",
+      "path": "CLAUDE.md",
+      "name": "CLAUDE.md"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/conventional-commit-message/SKILL.md",
+      "name": "conventional-commit-message"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/github-pr-description/SKILL.md",
+      "name": "github-pr-description"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/sonarcloud-review/SKILL.md",
+      "name": "sonarcloud-review"
+    }
+  ]
+}

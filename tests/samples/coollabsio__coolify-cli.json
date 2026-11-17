@@ -1,0 +1,16 @@
+{
+  "repo": "coollabsio/coolify-cli",
+  "sha": "ec20e52f33060612e8e5f2c378156182b22ccdee",
+  "artifacts": [
+    {
+      "kind": "rules",
+      "path": ".cursorrules",
+      "name": ".cursorrules"
+    },
+    {
+      "kind": "rules",
+      "path": "AGENTS.md",
+      "name": "AGENTS.md"
+    }
+  ]
+}

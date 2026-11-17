@@ -1,0 +1,243 @@
+{
+  "repo": "equinor/design-system",
+  "sha": "59a1ea0c67e48930aad26ff95e21b65fb13702c4",
+  "artifacts": [
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "PostToolUse[0].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".claude/settings.json",
+      "name": "PreToolUse[0].hooks[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".github/hooks/block-secrets.json",
+      "name": "preToolUse[0]"
+    },
+    {
+      "kind": "hook",
+      "path": ".github/hooks/format-on-edit.json",
+      "name": "postToolUse[0]"
+    },
+    {
+      "kind": "mcp_server",
+      "path": ".vscode/mcp.json",
+      "name": "figma",
+      "transport": "http"
+    },
+    {
+      "kind": "mcp_server",
+      "path": ".vscode/mcp.json",
+      "name": "playwright",
+      "transport": "stdio"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/CLAUDE.md",
+      "name": ".claude/CLAUDE.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/commands/accessibility-audit.md",
+      "name": ".claude/commands/accessibility-audit.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/commands/audit-harnesses.md",
+      "name": ".claude/commands/audit-harnesses.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/commands/create-component-doc.md",
+      "name": ".claude/commands/create-component-doc.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/commands/dependabot-duty.md",
+      "name": ".claude/commands/dependabot-duty.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/commands/new-component.md",
+      "name": ".claude/commands/new-component.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/commands/token-migration.md",
+      "name": ".claude/commands/token-migration.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/commands/tokens-studio.md",
+      "name": ".claude/commands/tokens-studio.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/rules/advisor.md",
+      "name": ".claude/rules/advisor.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/rules/colour-contrast.md",
+      "name": ".claude/rules/colour-contrast.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/rules/eds-component.md",
+      "name": ".claude/rules/eds-component.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".claude/rules/figma-component.md",
+      "name": ".claude/rules/figma-component.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/copilot-instructions.md",
+      "name": ".github/copilot-instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/colour-contrast.instructions.md",
+      "name": ".github/instructions/colour-contrast.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/figma.instructions.md",
+      "name": ".github/instructions/figma.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/global-coding.instructions.md",
+      "name": ".github/instructions/global-coding.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/markdown.instructions.md",
+      "name": ".github/instructions/markdown.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/react.instructions.md",
+      "name": ".github/instructions/react.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/styling.instructions.md",
+      "name": ".github/instructions/styling.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/instructions/ts.instructions.md",
+      "name": ".github/instructions/ts.instructions.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/accessibility-audit.prompt.md",
+      "name": ".github/prompts/accessibility-audit.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/advisor.prompt.md",
+      "name": ".github/prompts/advisor.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/audit-harnesses.prompt.md",
+      "name": ".github/prompts/audit-harnesses.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/dependabot-duty.prompt.md",
+      "name": ".github/prompts/dependabot-duty.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/new-component.prompt.md",
+      "name": ".github/prompts/new-component.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/token-migration.prompt.md",
+      "name": ".github/prompts/token-migration.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/tokens-studio.prompt.md",
+      "name": ".github/prompts/tokens-studio.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/write-issue.prompt.md",
+      "name": ".github/prompts/write-issue.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": ".github/prompts/write-pr-description.prompt.md",
+      "name": ".github/prompts/write-pr-description.prompt.md"
+    },
+    {
+      "kind": "rules",
+      "path": "AGENTS.md",
+      "name": "AGENTS.md"
+    },
+    {
+      "kind": "rules",
+      "path": "apps/design-system-docs/AGENTS.md",
+      "name": "apps/design-system-docs/AGENTS.md"
+    },
+    {
+      "kind": "rules",
+      "path": "apps/design-system-docs/CLAUDE.md",
+      "name": "apps/design-system-docs/CLAUDE.md"
+    },
+    {
+      "kind": "rules",
+      "path": "apps/eds-color-palette-generator/CLAUDE.md",
+      "name": "apps/eds-color-palette-generator/CLAUDE.md"
+    },
+    {
+      "kind": "rules",
+      "path": "apps/mobile-storybook/CLAUDE.md",
+      "name": "apps/mobile-storybook/CLAUDE.md"
+    },
+    {
+      "kind": "rules",
+      "path": "packages/eds-mobile-components/CLAUDE.md",
+      "name": "packages/eds-mobile-components/CLAUDE.md"
+    },
+    {
+      "kind": "rules",
+      "path": "packages/eds-tokens-build/CLAUDE.md",
+      "name": "packages/eds-tokens-build/CLAUDE.md"
+    },
+    {
+      "kind": "rules",
+      "path": "packages/eds-tokens-sync/CLAUDE.md",
+      "name": "packages/eds-tokens-sync/CLAUDE.md"
+    },
+    {
+      "kind": "rules",
+      "path": "packages/eds-tokens/CLAUDE.md",
+      "name": "packages/eds-tokens/CLAUDE.md"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/review-pr/SKILL.md",
+      "name": "review-pr"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/write-issue/SKILL.md",
+      "name": "write-issue"
+    },
+    {
+      "kind": "skill",
+      "path": ".claude/skills/write-pr-description/SKILL.md",
+      "name": "write-pr-description"
+    }
+  ]
+}
