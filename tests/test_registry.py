@@ -21,7 +21,7 @@ from agentbom.registry import REGISTRY, SCRIPT_LANGUAGES, match_source
         (".claude/rules/deep/nested/style.md", "rules_md", ("claude_code", "vscode")),
         ("packages/ui/AGENTS.md", "rules_md", ("agents_md",)),
         (".claude/CLAUDE.md", "rules_md", ("claude_code",)),
-        ("lib/.cursor/rules/team/style.mdc", "cursor_mdc", ("cursor",)),
+        ("lib/.cursor/rules/team/style.mdc", "rules_md", ("cursor",)),
         (".github/instructions/a/b.instructions.md", "rules_md", ("copilot",)),
         (".claude/hooks/guard.sh", "script", ("claude_code", "cursor", "copilot")),
         (".claude/hooks/lib/util.mjs", "script", ("claude_code", "cursor", "copilot")),

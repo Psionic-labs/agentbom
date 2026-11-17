@@ -9,6 +9,7 @@ from agentbom.parsers._shape import (
     as_text,
     load_json,
 )
+from agentbom.parsers.jsonc import strip_jsonc
 
 _COMMAND_ONLY: Mapping[str, HookShell] = {"command": "default"}
 _COPILOT_SHELLS: Mapping[str, HookShell] = {
@@ -73,7 +74,15 @@ def parse_cursor_hooks_json(
 def parse_copilot_hooks_json(
     text: str, path: str, agents: tuple[Agent, ...]
 ) -> Iterator[Hook | ScanError]:
-    yield from _flat_hooks(text, path, agents, _COPILOT_SHELLS)
+    try:
+        stripped = strip_jsonc(text)
+    except ShapeError as error:
+        yield ScanError(path=path, message=str(error))
+        return
+    if not stripped.strip():
+        # A file that is entirely commented out is how repos disable their hooks.
+        return
+    yield from _flat_hooks(stripped, path, agents, _COPILOT_SHELLS)
 
 
 def _flat_hooks(

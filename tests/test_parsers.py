@@ -225,6 +225,14 @@ def test_cursor_hooks() -> None:
     ]
 
 
+def test_copilot_hooks_accept_jsonc_and_a_fully_commented_file_has_no_hooks() -> None:
+    commented = '/*{\n  "hooks": {"preToolUse": [{"command": "x"}]}\n}*/\n'
+    assert _hooks(commented, "copilot_hooks_json") == []
+    jsonc = '{\n  // guard\n  "hooks": {"preToolUse": [{"command": "x",}]},\n}'
+    (hook,) = _hooks(jsonc, "copilot_hooks_json")
+    assert hook.commands == {"default": "x"}
+
+
 def test_copilot_hooks_keep_each_shell() -> None:
     text = json.dumps(
         {
@@ -355,7 +363,7 @@ def test_script_language_comes_from_the_extension(path: str, language: ScriptLan
         (
             "---\nglobs: *.ts\nalwaysApply: true\n---\nbody\n",
             ".cursor/rules/a.mdc",
-            "cursor_mdc",
+            "rules_md",
             5,
         ),
     ],
@@ -416,29 +424,41 @@ def test_frontmatter_dates_become_iso_strings() -> None:
 @pytest.mark.parametrize(
     ("text", "needle"),
     [
-        ("---\nname: [unclosed\n---\n", "invalid YAML frontmatter"),
         ("---\n- a\n- b\n---\n", "must be a mapping"),
         ("---\nname: x\n", "no closing --- line"),
         ("---\n1: one\n---\n", "non-string key"),
-        ("---\nblob: !!binary aGVsbG8=\n---\n", "no JSON form"),
-        ("---\nx: .nan\n---\n", "not a finite number"),
-        ("---\na: &a [*a]\n---\n", "deeper than"),
+    ],
+)
+def test_frontmatter_no_reader_accepts_is_an_error_without_an_artifact(
+    text: str, needle: str
+) -> None:
+    artifacts, errors = parse(text, ".claude/skills/s/SKILL.md", "skill_md", ("claude_code",))
+    assert artifacts == []
+    assert len(errors) == 1
+    assert needle in errors[0].message
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "---\nname: [unclosed\n---\n",
+        "---\nblob: !!binary aGVsbG8=\n---\n",
+        "---\nx: .nan\n---\n",
+        "---\na: &a [*a]\n---\n",
         (
             "---\na: &a [x, x, x, x, x, x, x, x, x, x]\n"
             + "".join(
                 f"{c}: &{c} [*{p}, *{p}, *{p}, *{p}, *{p}, *{p}, *{p}, *{p}, *{p}, *{p}]\n"
                 for p, c in zip("abcdef", "bcdefg", strict=True)
             )
-            + "---\n",
-            "more than",
+            + "---\n"
         ),
     ],
 )
-def test_bad_frontmatter_is_an_error_without_an_artifact(text: str, needle: str) -> None:
-    artifacts, errors = parse(text, ".claude/skills/s/SKILL.md", "skill_md", ("claude_code",))
-    assert artifacts == []
-    assert len(errors) == 1
-    assert needle in errors[0].message
+def test_hostile_yaml_frontmatter_reads_as_inert_raw_text(text: str) -> None:
+    skill = _markdown(text, ".claude/skills/s/SKILL.md", "skill_md")
+    raw = [line.split(":", 1) for line in text.split("\n")[1:-2]]
+    assert skill.frontmatter == {key: value.strip() for key, value in raw}
 
 
 def test_rules_name_is_path_and_frontmatter_is_optional() -> None:
@@ -458,9 +478,9 @@ def test_rules_starting_with_text_keep_later_rules_in_body() -> None:
     assert rule.body == text
 
 
-def test_cursor_mdc_reads_unquoted_globs_like_cursor() -> None:
+def test_mdc_rule_with_unquoted_globs_reads_flat_frontmatter() -> None:
     text = "---\ndescription: Rules for .mdc files\nglobs: *.mdc\nalwaysApply: false\n---\n# Body\n"
-    rule = _markdown(text, ".cursor/rules/mdc-files.mdc", "cursor_mdc")
+    rule = _markdown(text, ".cursor/rules/mdc-files.mdc", "rules_md")
     assert rule.frontmatter == {
         "description": "Rules for .mdc files",
         "globs": "*.mdc",
@@ -469,24 +489,27 @@ def test_cursor_mdc_reads_unquoted_globs_like_cursor() -> None:
     assert rule.body == "# Body\n"
 
 
-def test_cursor_mdc_prefers_yaml_when_it_parses() -> None:
+def test_skill_description_with_a_second_colon_reads_flat_frontmatter() -> None:
+    text = "---\nname: babysit\ndescription: Bring a PR to merge (via the CLI: run it)\n---\nBody\n"
+    skill = _markdown(text, ".claude/skills/babysit/SKILL.md", "skill_md")
+    assert skill.name == "babysit"
+    assert skill.frontmatter == {
+        "name": "babysit",
+        "description": "Bring a PR to merge (via the CLI: run it)",
+    }
+
+
+def test_frontmatter_prefers_yaml_when_it_parses() -> None:
     text = "---\nglobs:\n  - '*.ts'\n  - '*.tsx'\nalwaysApply: true\n---\n"
-    rule = _markdown(text, ".cursor/rules/ts.mdc", "cursor_mdc")
+    rule = _markdown(text, ".cursor/rules/ts.mdc", "rules_md")
     assert rule.frontmatter == {"globs": ["*.ts", "*.tsx"], "alwaysApply": True}
 
 
-def test_cursor_mdc_that_is_neither_yaml_nor_flat_is_an_error() -> None:
+@pytest.mark.parametrize("format", ["rules_md", "skill_md"])
+def test_frontmatter_that_is_neither_yaml_nor_flat_is_an_error(format: Format) -> None:
     text = "---\nglobs: *.ts\n  - nested\n---\n"
-    artifacts, errors = parse(text, ".cursor/rules/x.mdc", "cursor_mdc", ("cursor",))
+    artifacts, errors = parse(text, ".claude/skills/x/SKILL.md", format, ("claude_code",))
     assert artifacts == []
     assert len(errors) == 1
     assert errors[0].message.startswith("invalid YAML frontmatter")
     assert errors[0].message.endswith("at line 2")
-
-
-def test_other_rules_files_need_valid_yaml_frontmatter() -> None:
-    artifacts, errors = parse(
-        "---\npaths: *.ts\n---\n", ".claude/rules/x.md", "rules_md", ("vscode",)
-    )
-    assert artifacts == []
-    assert len(errors) == 1

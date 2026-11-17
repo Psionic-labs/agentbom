@@ -15,7 +15,7 @@ _FLAT_SCALARS: dict[str, JsonValue] = {"": None, "true": True, "false": False}
 
 def parse_skill_md(text: str, path: str, agents: tuple[Agent, ...]) -> Iterator[Skill | ScanError]:
     try:
-        frontmatter, body, body_line = _split_frontmatter(text, flat_fallback=False)
+        frontmatter, body, body_line = _split_frontmatter(text)
     except ShapeError as error:
         yield ScanError(path=path, message=str(error))
         return
@@ -35,22 +35,12 @@ def parse_skill_md(text: str, path: str, agents: tuple[Agent, ...]) -> Iterator[
 
 
 def parse_rules_md(text: str, path: str, agents: tuple[Agent, ...]) -> Iterator[Rules | ScanError]:
-    yield _rules(text, path, agents, flat_fallback=False)
+    yield _rules(text, path, agents)
 
 
-def parse_cursor_mdc(
-    text: str, path: str, agents: tuple[Agent, ...]
-) -> Iterator[Rules | ScanError]:
-    # Real .mdc rules ship unquoted globs such as `globs: *.mdc`, which YAML rejects
-    # because `*` starts an alias, so a flat `key: value` reading is the fallback.
-    yield _rules(text, path, agents, flat_fallback=True)
-
-
-def _rules(
-    text: str, path: str, agents: tuple[Agent, ...], *, flat_fallback: bool
-) -> Rules | ScanError:
+def _rules(text: str, path: str, agents: tuple[Agent, ...]) -> Rules | ScanError:
     try:
-        frontmatter, body, body_line = _split_frontmatter(text, flat_fallback=flat_fallback)
+        frontmatter, body, body_line = _split_frontmatter(text)
     except ShapeError as error:
         return ScanError(path=path, message=str(error))
     return Rules(
@@ -63,7 +53,7 @@ def _rules(
     )
 
 
-def _split_frontmatter(text: str, *, flat_fallback: bool) -> tuple[dict[str, JsonValue], str, int]:
+def _split_frontmatter(text: str) -> tuple[dict[str, JsonValue], str, int]:
     """Return the frontmatter, the body, and the 1-based file line the body starts on."""
     lines = text.split("\n")
     if lines[0].rstrip(" \t") != _DELIMITER:
@@ -75,7 +65,9 @@ def _split_frontmatter(text: str, *, flat_fallback: bool) -> tuple[dict[str, Jso
     try:
         return _yaml_mapping(header), body, body_line
     except ShapeError:
-        flat = _flat_mapping(header) if flat_fallback else None
+        # Real skills and rules ship frontmatter that YAML rejects but agents load, such as
+        # `globs: *.mdc` or an unquoted description with a second `: `, so read flat lines.
+        flat = _flat_mapping(header)
         if flat is None:
             raise
         return flat, body, body_line
