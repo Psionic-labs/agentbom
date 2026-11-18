@@ -1,0 +1,3 @@
+- Ignore files in dist/ and generated/.
+- Ignore the build output directory when searching.
+- Forget about legacy/ unless asked.

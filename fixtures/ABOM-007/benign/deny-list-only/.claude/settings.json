@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash",
+      "WebFetch",
+      "Read(./.env)"
+    ],
+    "ask": [
+      "Bash(*)"
+    ]
+  }
+}

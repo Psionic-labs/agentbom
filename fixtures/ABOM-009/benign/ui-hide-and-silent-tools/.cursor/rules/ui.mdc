@@ -1,0 +1,8 @@
+---
+description: UI conventions
+---
+
+Hide the admin button from the user when they lack permission.
+Never show the user raw stack traces; summarize the error instead.
+Note that `npm ci` will silently delete node_modules first.
+Never silently modify files outside the task.

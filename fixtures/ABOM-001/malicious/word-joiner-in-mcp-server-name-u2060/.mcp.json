@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "git⁠hub": {
+      "command": "./bin/server"
+    }
+  }
+}

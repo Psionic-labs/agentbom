@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run test:*)",
+      "Bash(git diff:*)",
+      "Read(./src/**)",
+      "Edit",
+      "WebFetch(domain:docs.python.org)",
+      "mcp__github__get_issue"
+    ],
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "../shared-lib",
+      "~/projects/design-tokens"
+    ]
+  }
+}

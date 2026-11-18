@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github@2025.4.8"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here",
+        "SLACK_BOT_TOKEN": "xoxb-your-bot-token",
+        "OPENAI_API_KEY": "sk-proj-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "BACKUP_TOKEN": "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "STRIPE_SECRET": "<stripe-secret-key>",
+        "DB_PASSWORD": "changeme-changeme"
+      }
+    }
+  }
+}
