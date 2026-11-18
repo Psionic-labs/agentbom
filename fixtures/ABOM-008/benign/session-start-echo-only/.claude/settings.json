@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"Remember: run the tests; never push to main.\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -74,6 +74,17 @@ def _server_surfaces(server: McpServer) -> Iterator[Surface]:
             assert_never(launch)
 
 
+def field_label(surface: Surface) -> str:
+    """The surface's field, prefixed with its artifact's name when one file holds several."""
+    match surface.artifact:
+        case McpServer():
+            return f'server "{surface.artifact.name}" {surface.field}'
+        case Hook():
+            return f"hook {surface.artifact.name} {surface.field}"
+        case _:
+            return surface.field
+
+
 def line_of(surface: Surface, offset: int) -> int | None:
     """The file line of the character at `offset` in `surface.text`, when the surface has one."""
     if surface.line is None:

@@ -3,8 +3,12 @@ from typing import Protocol
 
 from agentbom.models import SEVERITY_RANK, Artifact, Finding, RuleId
 from agentbom.rules.abom_001_hidden_unicode import HiddenUnicode
+from agentbom.rules.abom_002_remote_exec import RemoteScriptExecution
+from agentbom.rules.abom_003_credential_paths import CredentialPathAccess
+from agentbom.rules.abom_004_outbound_transfer import OutboundDataTransfer
 from agentbom.rules.abom_005_unpinned import UnpinnedServer
 from agentbom.rules.abom_007_permissions import OverBroadPermissions
+from agentbom.rules.abom_008_auto_run_hooks import AutoRunHooks
 from agentbom.rules.abom_009_instruction_override import InstructionOverride
 from agentbom.rules.abom_010_secrets import EmbeddedSecrets
 
@@ -18,8 +22,12 @@ class Rule(Protocol):
 
 RULES: tuple[Rule, ...] = (
     HiddenUnicode(),
+    RemoteScriptExecution(),
+    CredentialPathAccess(),
+    OutboundDataTransfer(),
     UnpinnedServer(),
     OverBroadPermissions(),
+    AutoRunHooks(),
     InstructionOverride(),
     EmbeddedSecrets(),
 )

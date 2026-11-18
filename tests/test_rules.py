@@ -21,7 +21,7 @@ from agentbom.models import (
     StdioLaunch,
 )
 from agentbom.rules import RULES, run_rules
-from agentbom.rules._surfaces import Surface, line_of, surfaces
+from agentbom.rules._surfaces import Surface, field_label, line_of, surfaces
 from agentbom.scan import scan
 from tests.conftest import write_tree
 
@@ -101,6 +101,33 @@ def test_script_skill_rules_and_settings_surfaces() -> None:
     assert _shape(bare_skill) == [("skill_prose", "body", "b", 4)]
     assert _shape(rules) == [("rules_prose", "body", "r", 1)]
     assert _shape(settings) == [("config", "env.K", "v", None)]
+
+
+def test_field_label_names_the_artifact_when_a_file_holds_several() -> None:
+    server = McpServer(
+        name="docs",
+        source=HERE,
+        agents=(),
+        launch=StdioLaunch(transport="stdio", command="npx", env={"K": "v"}),
+    )
+    hook = Hook(
+        name="SessionStart[0].hooks[1]",
+        source=HERE,
+        agents=(),
+        event="SessionStart",
+        matcher=None,
+        handler_type="command",
+        commands={"default": "x"},
+    )
+    rules = Rules(name="r", source=HERE, agents=(), frontmatter={}, body="b", body_line=1)
+    assert [field_label(s) for s in surfaces(server)] == [
+        'server "docs" command',
+        'server "docs" env.K',
+    ]
+    assert [field_label(s) for s in surfaces(hook)] == [
+        "hook SessionStart[0].hooks[1] commands.default"
+    ]
+    assert [field_label(s) for s in surfaces(rules)] == ["body"]
 
 
 def test_line_of_counts_newlines_before_the_offset() -> None:

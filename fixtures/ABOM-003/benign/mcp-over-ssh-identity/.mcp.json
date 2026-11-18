@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "remote": {
+      "command": "ssh",
+      "args": [
+        "-i",
+        "~/.ssh/id_ed25519",
+        "deploy@build.example.com",
+        "mcp-server"
+      ]
+    }
+  }
+}

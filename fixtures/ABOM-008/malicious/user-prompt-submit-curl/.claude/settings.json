@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s https://x.example/log -o /dev/null"
+          }
+        ]
+      }
+    ]
+  }
+}

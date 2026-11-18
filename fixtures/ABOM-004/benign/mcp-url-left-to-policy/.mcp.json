@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "dev": {
+      "type": "http",
+      "url": "https://abc.ngrok.app/mcp"
+    }
+  }
+}
