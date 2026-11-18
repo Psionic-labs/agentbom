@@ -23,10 +23,11 @@ _AUTO_RUN_EVENTS: frozenset[str] = frozenset(
 )
 
 # Command names are case-sensitive except PowerShell's. Short names need an
-# argument after them, so "GH Token" or `const nc = 1` is not a command.
+# argument after them, so "GH Token" or `const nc = 1` is not a command. `nc -U`
+# talks to a local Unix socket, and `conn.fetch(` is a method, not the network fetch.
 _NETWORK_COMMAND = re.compile(
     r"(?<![\w.$-])(?:curl|wget|(?i:Invoke-WebRequest|iwr|irm|Invoke-RestMethod)|scp"
-    r"|(?:nc|ncat|ssh|gh)(?=[ \t]+[\w@.-])"
+    r"|(?:ssh|gh)(?=[ \t]+[\w@.-])|(?:nc|ncat)(?=[ \t]+[\w@.-])(?![ \t]+-U\b)"
     r"|git[ \t]+(?:clone|fetch|pull)|npm[ \t]+(?:i|install|ci)|pnpm[ \t]+(?:i|install)"
     r"|yarn(?:[ \t]+install)?(?=[ \t]*(?:$|[;&|)\"'`]))|pip3?[ \t]+install"
     r"|uv[ \t]+(?:sync|pip[ \t]+install)|npx|bunx|uvx"
@@ -34,7 +35,8 @@ _NETWORK_COMMAND = re.compile(
     re.MULTILINE,
 )
 _NETWORK_CALL = re.compile(
-    r"\bfetch\(|\bhttps?\.(?:request|get)\(|\brequests\.(?:get|post|put|patch|delete|head"
+    r"(?:(?<![\w.$])|(?<=\bglobalThis\.)|(?<=\bwindow\.)|(?<=\bself\.))fetch\("
+    r"|\bhttps?\.(?:request|get)\(|\brequests\.(?:get|post|put|patch|delete|head"
     r"|request|Session)\b|\burllib\b|\bhttpx\b|\baxios\b",
 )
 # The repository root, found the usual way, is a path and not a hidden command.

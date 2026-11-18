@@ -1,0 +1,544 @@
+[
+ {
+  "repo": "AllYourBot/hostedgpt",
+  "sha": "5666c59993f710586f837c9a280fa9a2765b535b",
+  "stars": 513,
+  "size_kb": 17995,
+  "why": [
+   "hooks",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "ArtemisAI/Harness_Engineering",
+  "sha": "3c7cfab4250b714b300f467c83e5ce42108da633",
+  "stars": 14,
+  "size_kb": 125,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "rules"
+  ]
+ },
+ {
+  "repo": "AssemblyAI/blurt",
+  "sha": "3052ed58ba64d553e69386fada3d95a662019e07",
+  "stars": 72,
+  "size_kb": 19231,
+  "why": [
+   "hooks",
+   "permissions",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "azukiazusa1/sapper-blog-app",
+  "sha": "99ae7edd1486a0513165607c30263dfc966a96f4",
+  "stars": 190,
+  "size_kb": 220242,
+  "why": [
+   "mcp_stdio",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "Bhartendu-Kumar/rules_template",
+  "sha": "221fa536c6422f9657f61ae56789f11057c26001",
+  "stars": 1057,
+  "size_kb": 1551,
+  "why": [
+   "rules"
+  ]
+ },
+ {
+  "repo": "CliMA/EnsembleKalmanProcesses.jl",
+  "sha": "10487684e0d93a6af43297fe0925d9e5bfbc8f96",
+  "stars": 131,
+  "size_kb": 69695,
+  "why": [
+   "hooks",
+   "permissions",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "CMB2/CMB2",
+  "sha": "c94e24643912c83ca876a4f048fa6655afc45f87",
+  "stars": 3007,
+  "size_kb": 8784,
+  "why": [
+   "hooks",
+   "permissions",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "coollabsio/coolify-cli",
+  "sha": "ec20e52f33060612e8e5f2c378156182b22ccdee",
+  "stars": 502,
+  "size_kb": 1288,
+  "why": [
+   "rules"
+  ]
+ },
+ {
+  "repo": "diet103/claude-code-infrastructure-showcase",
+  "sha": "07f75ce3c301259e857343596e7883b8ce5a9f50",
+  "stars": 10058,
+  "size_kb": 264,
+  "why": [
+   "hooks",
+   "skills"
+  ]
+ },
+ {
+  "repo": "equinor/design-system",
+  "sha": "59a1ea0c67e48930aad26ff95e21b65fb13702c4",
+  "stars": 157,
+  "size_kb": 89464,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "permissions",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "FastLED/FastLED",
+  "sha": "2e7b0f397cc0df17dcc1430580cfb10185e8fbac",
+  "stars": 7536,
+  "size_kb": 142112,
+  "why": [
+   "hooks",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "getsentry/sentry-java",
+  "sha": "271bf348b14aca25b13f63dc32b3d14532141903",
+  "stars": 1362,
+  "size_kb": 138519,
+  "why": [
+   "permissions",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "gopaljilab/Clinical-Insight-Engine",
+  "sha": "816651ce980e4a4a3c92f0eee24ea60e6992f89e",
+  "stars": 26,
+  "size_kb": 98967,
+  "why": [
+   "rules"
+  ]
+ },
+ {
+  "repo": "gurusup/claude-code-demo",
+  "sha": "701d5e2f54253924da2462d82b11075036d0319f",
+  "stars": 75,
+  "size_kb": 1022,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "permissions",
+   "rules"
+  ]
+ },
+ {
+  "repo": "huytdps13400/react-native-ssl-manager",
+  "sha": "d7deac6110341ebe7d1b3fff240c56debe5fabf6",
+  "stars": 37,
+  "size_kb": 38860,
+  "why": [
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "imazen/imageflow",
+  "sha": "6bbe6677ab1de76e1e534aaf1c720064263cb816",
+  "stars": 4471,
+  "size_kb": 11667,
+  "why": [
+   "rules"
+  ]
+ },
+ {
+  "repo": "jacwu/github-materials",
+  "sha": "b9fbfaffc124d970b83c02d5b9db0a9d5394d4a8",
+  "stars": 78,
+  "size_kb": 16053,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "rules"
+  ]
+ },
+ {
+  "repo": "jasonkneen/tiny-world-builder",
+  "sha": "a28de80fdf5fa678c69a96ddabce3ff70ff34d78",
+  "stars": 1629,
+  "size_kb": 205473,
+  "why": [
+   "permissions",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "juyterman1000/entroly",
+  "sha": "3eb9807320a11ee8f67e9e763df0fd96292241af",
+  "stars": 488,
+  "size_kb": 69393,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "permissions",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "KeepSoftwareSimple/compass-calendar",
+  "sha": "86f29abddf69ca31c96fcb53ac11810f615f31b8",
+  "stars": 227,
+  "size_kb": 40184,
+  "why": [
+   "hooks",
+   "permissions",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "kerski/powerquery-connector-pbi-rest-api-commercial",
+  "sha": "954e0a46d8386b95a827896c60ce6bc245f7713c",
+  "stars": 36,
+  "size_kb": 53285,
+  "why": [
+   "hooks"
+  ]
+ },
+ {
+  "repo": "Khan/wonder-blocks",
+  "sha": "1cd5275b3891caa4597d0a980b6b298bad8b63af",
+  "stars": 163,
+  "size_kb": 65031,
+  "why": [
+   "hooks",
+   "permissions",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "kingchun1991/nextjs-chakra-starter-blog",
+  "sha": "a1f1d0f042b904ec677f18dd2733da138562e33f",
+  "stars": 10,
+  "size_kb": 5841,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "kprompt/kprompt",
+  "sha": "8d4322cf67d1f037110a6de1093dfedb11fb31b1",
+  "stars": 44,
+  "size_kb": 11440,
+  "why": [
+   "hooks",
+   "rules"
+  ]
+ },
+ {
+  "repo": "leaperone/MultiPost-Extension",
+  "sha": "5522ca01100a58572de3a652aebd7851f5fa648a",
+  "stars": 3931,
+  "size_kb": 13690,
+  "why": [
+   "rules"
+  ]
+ },
+ {
+  "repo": "LouizeB/flytrapds",
+  "sha": "fb8166102f493d5779bfccdf316c40e787640ee2",
+  "stars": 0,
+  "size_kb": 3079,
+  "why": [
+   "skills"
+  ]
+ },
+ {
+  "repo": "lucasvieirasilva/nx-plugins",
+  "sha": "e7629956ef002613c4df31ae5aa1fe5a2b13c227",
+  "stars": 154,
+  "size_kb": 3919,
+  "why": [
+   "permissions",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "lylo/pagecord",
+  "sha": "111305d2283ed69afdacaf0c809e78e25fac82f3",
+  "stars": 196,
+  "size_kb": 34616,
+  "why": [
+   "hooks",
+   "permissions",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "meta-quest/webxr-first-steps",
+  "sha": "49ecf80116d6eaf0f3722d8001f3e29ffe81cbae",
+  "stars": 179,
+  "size_kb": 60052,
+  "why": [
+   "mcp_stdio",
+   "rules"
+  ]
+ },
+ {
+  "repo": "modelcontextprotocol/servers",
+  "sha": "e1dc4b18dbb948921da37f3d4224a628730b43b0",
+  "stars": 92075,
+  "size_kb": 34625,
+  "why": [
+   "hooks",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "MRCalderon3D/everything-game-dev-code",
+  "sha": "a483ba7850f0081f0d47247e3bf67f4a3d4709c8",
+  "stars": 110,
+  "size_kb": 101953,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "rules"
+  ]
+ },
+ {
+  "repo": "nicolargo/glances",
+  "sha": "f5f29cf22f017498160ed75b048b68981836a7f0",
+  "stars": 33975,
+  "size_kb": 68290,
+  "why": [
+   "hooks",
+   "permissions",
+   "rules"
+  ]
+ },
+ {
+  "repo": "nubjs/nub",
+  "sha": "1556637f83ae77aa593b0871614a175c04523c2e",
+  "stars": 4446,
+  "size_kb": 217633,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "openshift/lvm-operator",
+  "sha": "1c40c4a54f35c4ca6c0cc9d43f45e72e01df1d74",
+  "stars": 70,
+  "size_kb": 49764,
+  "why": [
+   "hooks",
+   "permissions",
+   "rules"
+  ]
+ },
+ {
+  "repo": "parcadei/Continuous-Claude-v3",
+  "sha": "d07ff4b06b62f43771bc0c927d0211b734d6149e",
+  "stars": 3951,
+  "size_kb": 4344,
+  "why": [
+   "hooks",
+   "skills"
+  ]
+ },
+ {
+  "repo": "picoe/Eto",
+  "sha": "51079421b53229c597fdb2a1010ae74aea09324c",
+  "stars": 3988,
+  "size_kb": 99819,
+  "why": [
+   "permissions",
+   "rules"
+  ]
+ },
+ {
+  "repo": "rsyslog/rsyslog",
+  "sha": "205fe52533cdf1fba2f9e4a4de7756b138d7ba6b",
+  "stars": 2348,
+  "size_kb": 120187,
+  "why": [
+   "hooks",
+   "rules"
+  ]
+ },
+ {
+  "repo": "s00d/nuxt-i18n-micro",
+  "sha": "c89b73dcf28fbb581e070db1054026db115f07b0",
+  "stars": 255,
+  "size_kb": 86824,
+  "why": [
+   "mcp_stdio",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "sanjeed5/ai-conversation-simulator",
+  "sha": "ef105e8262bf023755b5dfce875785e5fb0b1264",
+  "stars": 47,
+  "size_kb": 123,
+  "why": [
+   "rules"
+  ]
+ },
+ {
+  "repo": "seijikohara/logback-access-spring-boot-starter",
+  "sha": "b3850c4eba2b08fad55a19b04014b282ae8adad1",
+  "stars": 8,
+  "size_kb": 1630,
+  "why": [
+   "permissions"
+  ]
+ },
+ {
+  "repo": "sKuhLight/Axis",
+  "sha": "6b87bd2472fd88854421fda0dd1d2d7a02d2dd19",
+  "stars": 19,
+  "size_kb": 3285,
+  "why": [
+   "hooks",
+   "permissions"
+  ]
+ },
+ {
+  "repo": "srdp-hub/srdp",
+  "sha": "95488b98b0e96d625bf98aab3fefe5d8fc74f599",
+  "stars": 22,
+  "size_kb": 2621,
+  "why": [
+   "hooks",
+   "rules"
+  ]
+ },
+ {
+  "repo": "standardagents/dmux",
+  "sha": "8cb3d926631a9349ab67f7ece41d218427ac7e24",
+  "stars": 1819,
+  "size_kb": 64881,
+  "why": [
+   "hooks",
+   "rules"
+  ]
+ },
+ {
+  "repo": "TheMostlyGreat/mythos",
+  "sha": "6c8c9e8a220375b40d6f8c8eea0001352a5beaa4",
+  "stars": 19,
+  "size_kb": 89934,
+  "why": [
+   "hooks",
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "toolprint/just-mcp",
+  "sha": "02714e3987996097891daab1865f4089486d63a0",
+  "stars": 45,
+  "size_kb": 883,
+  "why": [
+   "mcp_stdio",
+   "permissions",
+   "rules"
+  ]
+ },
+ {
+  "repo": "Tristan578/project-forge",
+  "sha": "fe45076663d7b50fecf9860c9d949f0763554cb6",
+  "stars": 15,
+  "size_kb": 54705,
+  "why": [
+   "hooks",
+   "mcp_stdio",
+   "permissions",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ },
+ {
+  "repo": "un-pany/v3-admin-vite",
+  "sha": "c2c895d71d571e9c18c2453fa85469a479c79fc6",
+  "stars": 7072,
+  "size_kb": 54313,
+  "why": [
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "USAREUR-AF/goatcore",
+  "sha": "5c5aee66469779c572f4631cdc9751c72edb38ee",
+  "stars": 24,
+  "size_kb": 38964,
+  "why": [
+   "rules",
+   "skills"
+  ]
+ },
+ {
+  "repo": "VardyNg/K8S-On-Cloud",
+  "sha": "d5e57a80801fe233073902071b8882af93d553c5",
+  "stars": 3,
+  "size_kb": 879,
+  "why": [
+   "mcp_stdio"
+  ]
+ },
+ {
+  "repo": "veronez-io/claude-code-devops",
+  "sha": "bc9394ff282764383dc49e5c035f1f47612f8061",
+  "stars": 31,
+  "size_kb": 5396,
+  "why": [
+   "mcp_stdio",
+   "rules",
+   "skill_scripts",
+   "skills"
+  ]
+ }
+]

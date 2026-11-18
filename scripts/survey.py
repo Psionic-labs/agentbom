@@ -1,6 +1,6 @@
 """Scan a list of public repositories for the week-2 hand review.
 
-Usage: uv run python scripts/survey.py repos.json
+Usage: uv run python scripts/survey.py scripts/survey_repos.json
 
 repos.json is a list of {"repo": "owner/name", "sha": "<commit>"}. Each repository is
 checked out under .survey/owner__name/ and every finding is written to

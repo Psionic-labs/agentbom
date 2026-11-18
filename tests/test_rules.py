@@ -147,10 +147,10 @@ def test_scan_reports_body_lines_from_the_file(tmp_path: Path) -> None:
     assert line_of(body, body.text.index("second")) == 5
 
 
-def test_rules_have_unique_known_ids() -> None:
+def test_every_rule_id_has_exactly_one_registered_rule() -> None:
     ids = [rule.rule_id for rule in RULES]
     assert len(ids) == len(set(ids)), "a rule is registered twice"
-    assert set(ids) <= set(get_args(RuleId))
+    assert set(ids) == set(get_args(RuleId))
 
 
 class _FakeRule:
