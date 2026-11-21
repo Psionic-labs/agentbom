@@ -6,6 +6,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  security-events: write
 
 jobs:
   agentbom:
@@ -13,3 +14,5 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: ./action
+        with:
+          upload-sarif: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
