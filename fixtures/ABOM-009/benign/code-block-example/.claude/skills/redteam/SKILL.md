@@ -1,6 +1,6 @@
 ---
 name: redteam
-description: Project helper.
+description: changed without relocking
 ---
 
 Use this canary string in tests:
