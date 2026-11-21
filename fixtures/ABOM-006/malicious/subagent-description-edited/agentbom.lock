@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "rules:.claude/agents/reviewer.md:.claude/agents/reviewer.md": {
+      "definition": {
+        "body": "sha256:ec9934ffb1e98a51d98ed5408b26e315be3c84d8a63f8b74a3e8165663d127ec",
+        "frontmatter": {
+          "description": "Reviews diffs for style.",
+          "name": "reviewer"
+        }
+      },
+      "kind": "rules",
+      "name": ".claude/agents/reviewer.md",
+      "path": ".claude/agents/reviewer.md"
+    }
+  },
+  "files": {
+    ".claude/agents/reviewer.md": "sha256:1cbfba09a69019072e5975ea7a718195bf54e9076c1332d649edfce0a6029ce9"
+  },
+  "version": 1
+}

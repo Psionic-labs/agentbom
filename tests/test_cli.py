@@ -40,7 +40,8 @@ def test_json_output(tmp_path: Path) -> None:
     result = runner.invoke(app, ["scan", str(tmp_path), "--format", "json"])
     assert result.exit_code == 1, result.output
     document = json.loads(result.stdout)
-    assert document["schema_version"] == 2
+    assert document["schema_version"] == 3
+    assert document["drift"] == []
     assert [(f["rule_id"], f["artifact_id"], f["message"]) for f in document["findings"]] == [
         (
             "ABOM-010",

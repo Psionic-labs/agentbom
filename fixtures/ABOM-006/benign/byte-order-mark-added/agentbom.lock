@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "skill:.claude/skills/formatter/SKILL.md:formatter": {
+      "definition": {
+        "body": "sha256:abc42c7c4d3f49a0e41a45ca2b5c513892f53f6efebc5814d89a947c98a329e7",
+        "frontmatter": {
+          "description": "Formats staged files with the repository's prettier config.",
+          "name": "formatter"
+        }
+      },
+      "kind": "skill",
+      "name": "formatter",
+      "path": ".claude/skills/formatter/SKILL.md"
+    }
+  },
+  "files": {
+    ".claude/skills/formatter/SKILL.md": "sha256:7d2d890db3e2e45633c0e8a318c88e96a3fd0dd86ff785bc48339a4a3e625e10"
+  },
+  "version": 1
+}

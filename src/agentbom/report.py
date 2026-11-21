@@ -2,12 +2,16 @@ import json
 import unicodedata
 from typing import Any
 
+from pydantic import JsonValue
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
+from agentbom.lockfile import LOCKFILE_NAME
 from agentbom.models import (
     Artifact,
+    Drift,
+    FieldChange,
     Finding,
     Hook,
     McpServer,
@@ -19,7 +23,7 @@ from agentbom.models import (
     StdioLaunch,
 )
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 _SEVERITY_LABELS: dict[Severity, str] = {"high": "HIGH", "medium": "MED", "low": "LOW"}
 _INVISIBLE_CATEGORIES = frozenset({"Cc", "Cf", "Co", "Cs", "Zl", "Zp"})
 
@@ -28,6 +32,7 @@ def render_json(result: ScanResult) -> str:
     document = {
         "schema_version": SCHEMA_VERSION,
         "artifacts": [_artifact_document(artifact) for artifact in result.artifacts],
+        "drift": [item.model_dump(mode="json") for item in result.drift],
         "errors": [error.model_dump(mode="json") for error in result.errors],
         "findings": [finding.model_dump(mode="json") for finding in result.findings],
     }
@@ -94,10 +99,61 @@ def print_terminal(result: ScanResult, out: Console, err: Console) -> None:
     for finding in result.findings:
         out.print(Text(_visible(finding_line(finding))), soft_wrap=True)
     out.print(Text(findings_total(result)), soft_wrap=True)
+    print_errors(result, err)
+
+
+def print_errors(result: ScanResult, err: Console) -> None:
     if result.errors:
         err.print(Text(f"{len(result.errors)} error(s):"))
         for error in result.errors:
             err.print(Text(_visible(f"{error.path}: {error.message}")))
+
+
+def print_drift(result: ScanResult, out: Console) -> None:
+    for line in drift_lines(result.drift):
+        out.print(Text(_visible(line)), soft_wrap=True)
+
+
+def drift_lines(drift: tuple[Drift, ...]) -> list[str]:
+    """The readable diff between the lockfile and the repository, ending in a total."""
+    lines: list[str] = []
+    for item in drift:
+        lines.append(f"{item.change.upper():<8} {item.artifact_id}")
+        for change in item.fields:
+            lines.extend(_field_lines(change))
+    if not drift:
+        return [*lines, f"No drift from {LOCKFILE_NAME}."]
+    noun = "difference" if len(drift) == 1 else "differences"
+    return [*lines, f"{len(drift)} {noun} from {LOCKFILE_NAME}."]
+
+
+def _field_lines(change: FieldChange) -> list[str]:
+    if change.hidden:
+        note = "only a digest is locked; review the file's diff"
+        return [f"  {change.field}: {change.change} ({note})"]
+    lines = [f"  {change.field}:"]
+    if change.change != "added":
+        lines.extend(_value_lines("-", change.before))
+    if change.change != "removed":
+        lines.extend(_value_lines("+", change.after))
+    return lines
+
+
+def _value_lines(mark: str, value: JsonValue) -> list[str]:
+    # A string prints raw unless it reads as JSON, so "false" and false never look alike.
+    if isinstance(value, str) and not _reads_as_json(value):
+        text = value
+    else:
+        text = json.dumps(value, ensure_ascii=False)
+    return [f"    {mark} {line}" for line in text.split("\n")]
+
+
+def _reads_as_json(text: str) -> bool:
+    try:
+        json.loads(text)
+    except (ValueError, RecursionError):
+        return False
+    return True
 
 
 def finding_line(finding: Finding) -> str:

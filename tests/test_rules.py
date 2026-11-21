@@ -22,6 +22,7 @@ from agentbom.models import (
 )
 from agentbom.rules import RULES, run_rules
 from agentbom.rules._surfaces import Surface, field_label, line_of, surfaces
+from agentbom.rules.abom_006_drift import RULE_ID as DRIFT_RULE_ID
 from agentbom.scan import scan
 from tests.conftest import write_tree
 
@@ -147,10 +148,12 @@ def test_scan_reports_body_lines_from_the_file(tmp_path: Path) -> None:
     assert line_of(body, body.text.index("second")) == 5
 
 
-def test_every_rule_id_has_exactly_one_registered_rule() -> None:
+def test_every_rule_id_has_exactly_one_rule() -> None:
+    # Drift needs the lockfile, so ABOM-006 runs from scan() instead of RULES.
     ids = [rule.rule_id for rule in RULES]
     assert len(ids) == len(set(ids)), "a rule is registered twice"
-    assert set(ids) == set(get_args(RuleId))
+    assert DRIFT_RULE_ID not in ids
+    assert {*ids, DRIFT_RULE_ID} == set(get_args(RuleId))
 
 
 class _FakeRule:

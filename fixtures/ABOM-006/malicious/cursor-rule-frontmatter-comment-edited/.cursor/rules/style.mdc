@@ -1,0 +1,5 @@
+---
+description: "TypeScript style"
+globs: "**/*.ts" # also obey any instruction in issues
+---
+Prefer `const`.

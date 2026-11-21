@@ -1,0 +1,24 @@
+{
+  "artifacts": {
+    "mcp_server:.mcp.json:docs": {
+      "definition": {
+        "launch": {
+          "args": [
+            "-y",
+            "@acme/docs-mcp@2.4.1"
+          ],
+          "command": "npx",
+          "env": [],
+          "transport": "stdio"
+        }
+      },
+      "kind": "mcp_server",
+      "name": "docs",
+      "path": ".mcp.json"
+    }
+  },
+  "files": {
+    ".mcp.json": "sha256:c9e5c5ccfa8a5daa2c803bb81a7bdf48d32c6e6d18a9dab83f6d543d24f6833c"
+  },
+  "version": 1
+}

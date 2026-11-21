@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "rules:.cursor/rules/style.mdc:.cursor/rules/style.mdc": {
+      "definition": {
+        "body": "sha256:238d5c63864ff5acde4990ddc9d7f01fce35c4969a847f10fa913b289b66d0e5",
+        "frontmatter": {
+          "description": "TypeScript style",
+          "globs": "**/*.ts"
+        }
+      },
+      "kind": "rules",
+      "name": ".cursor/rules/style.mdc",
+      "path": ".cursor/rules/style.mdc"
+    }
+  },
+  "files": {
+    ".cursor/rules/style.mdc": "sha256:2bbd346e1687bc7bfa87922d0638918c9979b2862018722bef1061fa127ba41d"
+  },
+  "version": 1
+}

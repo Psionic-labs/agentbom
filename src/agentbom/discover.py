@@ -61,7 +61,7 @@ def discover(root: Path) -> tuple[list[SourceFile], list[ScanError]]:
         here = Path(current)
         directory = "" if here == root else relative(current)
         if ".gitignore" in filenames and not _is_link(here / ".gitignore"):
-            gitignore = _read(here / ".gitignore", _join(directory, ".gitignore"))
+            gitignore = read_source(here / ".gitignore", _join(directory, ".gitignore"))
             if isinstance(gitignore, ScanError):
                 errors.append(gitignore)
             else:
@@ -80,7 +80,7 @@ def discover(root: Path) -> tuple[list[SourceFile], list[ScanError]]:
                 continue
             if ignores.ignores(path, is_dir=False):
                 continue
-            text = _read(here / name, path)
+            text = read_source(here / name, path)
             if isinstance(text, ScanError):
                 errors.append(text)
             else:
@@ -93,7 +93,7 @@ def _decode_text(data: bytes) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
-def _read(file: Path, path: str) -> str | ScanError:
+def read_source(file: Path, path: str) -> str | ScanError:
     try:
         if not stat.S_ISREG(file.lstat().st_mode):
             return ScanError(path=path, message="not a regular file")
