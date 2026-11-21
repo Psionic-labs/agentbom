@@ -1,0 +1,27 @@
+version: 1
+fail_on: high
+ignore:
+  - rule: ABOM-001
+    path: fixtures/
+    reason: detection fixtures are deliberately malicious samples that no agent loads
+    expires: 2027-06-30
+  - rule: ABOM-002
+    path: fixtures/
+    reason: detection fixtures are deliberately malicious samples that no agent loads
+    expires: 2027-06-30
+  - rule: ABOM-003
+    path: fixtures/
+    reason: detection fixtures are deliberately malicious samples that no agent loads
+    expires: 2027-06-30
+  - rule: ABOM-004
+    path: fixtures/
+    reason: detection fixtures are deliberately malicious samples that no agent loads
+    expires: 2027-06-30
+  - rule: ABOM-009
+    path: fixtures/
+    reason: detection fixtures are deliberately malicious samples that no agent loads
+    expires: 2027-06-30
+  - rule: ABOM-010
+    path: fixtures/
+    reason: detection fixtures are deliberately malicious samples that no agent loads
+    expires: 2027-06-30

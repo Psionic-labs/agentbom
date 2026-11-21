@@ -2,6 +2,7 @@ import os
 import stat
 import sys
 import tempfile
+from datetime import date
 from enum import StrEnum
 from pathlib import Path
 from typing import Annotated, NoReturn
@@ -19,7 +20,9 @@ from agentbom.lockfile import (
     render_lock,
 )
 from agentbom.models import SEVERITY_RANK, ScanError, ScanResult, Severity
-from agentbom.report import print_drift, print_errors, print_terminal, render_json
+from agentbom.policy import POLICY_FILENAME, Policy, PolicyError, apply_policy, parse_policy
+from agentbom.report import print_errors, print_terminal, render_json, render_markdown
+from agentbom.sarif import render_sarif
 from agentbom.scan import scan
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
@@ -28,6 +31,8 @@ app = typer.Typer(add_completion=False, no_args_is_help=True)
 class OutputFormat(StrEnum):
     terminal = "terminal"
     json = "json"
+    sarif = "sarif"
+    markdown = "markdown"
 
 
 class FailOn(StrEnum):
@@ -45,7 +50,19 @@ _THRESHOLDS: dict[FailOn, Severity] = {
 PathArgument = Annotated[Path, typer.Argument(help="Repository root to scan.")]
 FormatOption = Annotated[OutputFormat, typer.Option("--format", help="Output format.")]
 FailOnOption = Annotated[
-    FailOn, typer.Option("--fail-on", help="Exit 1 when a finding has this severity or higher.")
+    FailOn | None,
+    typer.Option(
+        "--fail-on",
+        help="Exit 1 when a finding has this severity or higher. "
+        "Overrides fail_on in the policy file; the default is high.",
+    ),
+]
+PolicyOption = Annotated[
+    Path | None,
+    typer.Option(
+        "--policy",
+        help=f"Policy file to apply. The default is PATH/{POLICY_FILENAME} when it exists.",
+    ),
 ]
 
 
@@ -58,13 +75,12 @@ def main() -> None:
 def scan_command(
     path: PathArgument = Path(),
     output_format: FormatOption = OutputFormat.terminal,
-    fail_on: FailOnOption = FailOn.high,
+    fail_on: FailOnOption = None,
+    policy_file: PolicyOption = None,
 ) -> None:
     """List the agent context in a repository and report findings."""
     _require_directory(path)
-    result = scan(path)
-    _report(result, output_format, drift=False)
-    raise typer.Exit(exit_code(result, _THRESHOLDS[fail_on]))
+    _run("scan", path, None, output_format, fail_on, _load_policy(path, policy_file))
 
 
 @app.command("lock")
@@ -92,13 +108,32 @@ def lock_command(path: PathArgument = Path()) -> None:
 def check_command(
     path: PathArgument = Path(),
     output_format: FormatOption = OutputFormat.terminal,
-    fail_on: FailOnOption = FailOn.high,
+    fail_on: FailOnOption = None,
+    policy_file: PolicyOption = None,
 ) -> None:
     """Report findings and any drift from agentbom.lock, which always fails the check."""
     _require_directory(path)
-    result = scan(path, _read_lock(path))
-    _report(result, output_format, drift=True)
-    raise typer.Exit(exit_code(result, _THRESHOLDS[fail_on]))
+    policy = _load_policy(path, policy_file)
+    _run("check", path, _read_lock(path), output_format, fail_on, policy)
+
+
+def _run(
+    command: str,
+    path: Path,
+    lock: Lockfile | None,
+    output_format: OutputFormat,
+    fail_on: FailOn | None,
+    policy: Policy | None,
+) -> NoReturn:
+    result = scan(path, lock)
+    if policy is not None:
+        result = apply_policy(policy, result, date.today())
+    _report(result, output_format, command=command, drift=lock is not None)
+    if fail_on is not None:
+        threshold = _THRESHOLDS[fail_on]
+    else:
+        threshold = "high" if policy is None else policy.fail_on
+    raise typer.Exit(exit_code(result, threshold))
 
 
 def _require_directory(path: Path) -> None:
@@ -119,15 +154,32 @@ def _read_lock(root: Path) -> Lockfile:
         _fail(f"{LOCKFILE_NAME}: {error}")
 
 
-def _report(result: ScanResult, output_format: OutputFormat, *, drift: bool) -> None:
-    if output_format is OutputFormat.json:
-        sys.stdout.buffer.write(render_json(result).encode("utf-8"))
-        sys.stdout.flush()
-        return
-    out = Console()
-    print_terminal(result, out, Console(stderr=True))
-    if drift:
-        print_drift(result, out)
+def _load_policy(root: Path, explicit: Path | None) -> Policy | None:
+    file = root / POLICY_FILENAME if explicit is None else explicit
+    if explicit is None and _lstat_mode(file) is None:
+        return None
+    text = read_source(file, file.name)
+    if isinstance(text, ScanError):
+        _fail(f"{text.path}: {text.message}")
+    try:
+        return parse_policy(text)
+    except PolicyError as error:
+        _fail(f"{file.name}: {error}")
+
+
+def _report(result: ScanResult, output_format: OutputFormat, *, command: str, drift: bool) -> None:
+    match output_format:
+        case OutputFormat.terminal:
+            print_terminal(result, Console(), Console(stderr=True), drift=drift)
+            return
+        case OutputFormat.json:
+            text = render_json(result)
+        case OutputFormat.sarif:
+            text = render_sarif(result)
+        case OutputFormat.markdown:
+            text = render_markdown(result, command=command, drift=drift)
+    sys.stdout.buffer.write(text.encode("utf-8"))
+    sys.stdout.flush()
 
 
 def _replace_file(target: Path, text: str) -> None:
