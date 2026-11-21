@@ -4,6 +4,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
+ArtifactKind = Literal["mcp_server", "hook", "skill", "rules", "script", "settings"]
+DriftKind = ArtifactKind | Literal["file"]
 Agent = Literal["claude_code", "cursor", "vscode", "copilot", "codex", "agents_md"]
 HookShell = Literal["default", "bash", "powershell"]
 RemoteTransport = Literal["http", "sse", "ws"]
@@ -15,6 +17,7 @@ RuleId = Literal[
     "ABOM-003",
     "ABOM-004",
     "ABOM-005",
+    "ABOM-006",
     "ABOM-007",
     "ABOM-008",
     "ABOM-009",
@@ -49,7 +52,7 @@ class RemoteLaunch(_Frozen):
 
 
 class _ArtifactBase(_Frozen):
-    kind: str
+    kind: ArtifactKind
     name: str
     source: Location
     agents: tuple[Agent, ...]
@@ -131,7 +134,37 @@ class Finding(_Frozen):
     fix: str | None = None
 
 
+Change = Literal["added", "removed", "changed"]
+
+
+class FieldChange(_Frozen):
+    """One leaf of an artifact definition that differs from the lockfile.
+
+    `before` is meaningful unless the field was added, `after` unless it was removed.
+    A hidden field holds a digest, because the lockfile never stores its value.
+    """
+
+    field: str
+    change: Change
+    before: JsonValue = None
+    after: JsonValue = None
+    hidden: bool
+
+
+class Drift(_Frozen):
+    """An artifact, or a whole source file, that differs from the lockfile."""
+
+    artifact_id: str
+    change: Change
+    kind: DriftKind
+    name: str
+    location: Location
+    fields: tuple[FieldChange, ...]
+
+
 class ScanResult(_Frozen):
     artifacts: tuple[Artifact, ...]
     errors: tuple[ScanError, ...]
     findings: tuple[Finding, ...]
+    drift: tuple[Drift, ...] = ()
+    file_digests: dict[str, str] = Field(default_factory=dict)

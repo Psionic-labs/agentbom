@@ -1,12 +1,13 @@
 from collections.abc import Iterable, Sequence
 from typing import Protocol
 
-from agentbom.models import SEVERITY_RANK, Artifact, Finding, RuleId
+from agentbom.models import SEVERITY_RANK, Artifact, Drift, Finding, RuleId
 from agentbom.rules.abom_001_hidden_unicode import HiddenUnicode
 from agentbom.rules.abom_002_remote_exec import RemoteScriptExecution
 from agentbom.rules.abom_003_credential_paths import CredentialPathAccess
 from agentbom.rules.abom_004_outbound_transfer import OutboundDataTransfer
 from agentbom.rules.abom_005_unpinned import UnpinnedServer
+from agentbom.rules.abom_006_drift import drift_findings
 from agentbom.rules.abom_007_permissions import OverBroadPermissions
 from agentbom.rules.abom_008_auto_run_hooks import AutoRunHooks
 from agentbom.rules.abom_009_instruction_override import InstructionOverride
@@ -33,8 +34,9 @@ RULES: tuple[Rule, ...] = (
 )
 
 
-def run_rules(artifacts: Sequence[Artifact]) -> tuple[Finding, ...]:
+def run_rules(artifacts: Sequence[Artifact], drift: Sequence[Drift] = ()) -> tuple[Finding, ...]:
     findings = [finding for rule in RULES for finding in rule.run(artifacts)]
+    findings.extend(drift_findings(drift))
     return tuple(sorted(findings, key=_finding_key))
 
 

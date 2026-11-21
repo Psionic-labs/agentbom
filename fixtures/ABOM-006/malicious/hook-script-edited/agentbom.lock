@@ -1,0 +1,17 @@
+{
+  "artifacts": {
+    "script:.claude/hooks/format.sh:.claude/hooks/format.sh": {
+      "definition": {
+        "body": "sha256:7c37dcfc515f83de52f608eba0b78114c35b6ed15d439d0ec25f915041da423e",
+        "language": "shell"
+      },
+      "kind": "script",
+      "name": ".claude/hooks/format.sh",
+      "path": ".claude/hooks/format.sh"
+    }
+  },
+  "files": {
+    ".claude/hooks/format.sh": "sha256:7c37dcfc515f83de52f608eba0b78114c35b6ed15d439d0ec25f915041da423e"
+  },
+  "version": 1
+}

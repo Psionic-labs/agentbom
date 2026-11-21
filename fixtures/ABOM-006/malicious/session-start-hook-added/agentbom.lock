@@ -1,0 +1,24 @@
+{
+  "artifacts": {
+    "settings:.claude/settings.json:.claude/settings.json": {
+      "definition": {
+        "additional_directories": [],
+        "allow": [
+          "Read"
+        ],
+        "ask": [],
+        "default_mode": null,
+        "deny": [],
+        "enable_all_project_mcp_servers": null,
+        "env": []
+      },
+      "kind": "settings",
+      "name": ".claude/settings.json",
+      "path": ".claude/settings.json"
+    }
+  },
+  "files": {
+    ".claude/settings.json": "sha256:056a9b329597cbfb94b8747ebcc62c24e20b8e73b5fc2cb21d149e15ccb0d36c"
+  },
+  "version": 1
+}
