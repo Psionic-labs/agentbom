@@ -20,7 +20,8 @@ def _git(cwd: Path, *args: str, check: bool = True) -> subprocess.CompletedProce
         cwd=cwd,
         check=check,
         capture_output=True,
-        text=True,
+        encoding="utf-8",
+        errors="replace",
         env=_GIT_ENV,
         timeout=FETCH_TIMEOUT_SECONDS,
     )
