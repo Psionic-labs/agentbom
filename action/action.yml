@@ -24,8 +24,8 @@ inputs:
   upload-sarif:
     description: >-
       Upload the SARIF report to GitHub code scanning. Needs the
-      `security-events: write` permission, and GitHub Advanced Security on a
-      private repository.
+      `security-events: write` permission, and a GitHub Code Security license
+      on a private repository.
     default: "false"
   github-token:
     description: Token used to comment on the pull request.

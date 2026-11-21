@@ -187,6 +187,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  security-events: write
 
 jobs:
   agentbom:
@@ -194,7 +195,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: Psionic-labs/agentbom/action@<commit>
+        with:
+          upload-sarif: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
 ```
+
+The `upload-sarif` expression skips the upload for pull requests from
+forks, whose token cannot write security events. Drop `security-events`
+and `upload-sarif` if you only want the comment and the exit code.
 
 | Input | Default | Meaning |
 | --- | --- | --- |
@@ -203,7 +210,7 @@ jobs:
 | `fail-on` | empty | Overrides `fail_on` in the policy |
 | `comment` | `true` | Post or update the pull request comment |
 | `sarif-file` | `agentbom.sarif` | Where to write the SARIF report |
-| `upload-sarif` | `false` | Upload to code scanning; needs `security-events: write`, and GitHub Advanced Security on a private repository |
+| `upload-sarif` | `false` | Upload to code scanning; needs `security-events: write`, and a GitHub Code Security license on a private repository |
 | `github-token` | `github.token` | Token for the comment |
 
 A pull request from a fork gets a read-only token, so the comment is
