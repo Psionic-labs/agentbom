@@ -255,3 +255,7 @@ def _reject_constant(name: str) -> None:
 
 def digest_text(text: str) -> str:
     return DIGEST_PREFIX + hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def digest_link(target: str) -> str:
+    return digest_text(f"symlink -> {target}")

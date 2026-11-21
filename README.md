@@ -45,9 +45,14 @@ Both formats leave out secrets: MCP server `env` and `headers` and the
 settings `env` show their keys only. JSON output leaves out skill, rules
 and script bodies and gives each artifact a `content_hash` instead.
 
-The scan skips `.git`, files and directories matched by `.gitignore`, and
-symlinks. Files larger than 2 MiB, files that are not UTF-8 and files that
-do not parse are reported as errors.
+In a git checkout (`PATH` holds `.git`), the scan reads the files that
+`.git/index` tracks, so `.gitignore` and `.git/info/exclude` change
+nothing and untracked files are left out. Outside git, it reads every file
+under `PATH` except `.git` directories. A symlink is followed through the
+repository's own paths, never on disk, and the files it leads to are
+scanned at their real path. Files larger than 2 MiB, files that are not
+UTF-8, files that do not parse, and symlinks at an agent file's path that
+cannot be followed are reported as errors.
 
 Exit codes: `2` when `PATH` is not a directory or any file could not be
 read or parsed, because a partial scan cannot be trusted; otherwise `1`
@@ -104,12 +109,24 @@ reports drift until you run `lock` again. `check` exits 2 when
 
 ### Limits
 
-The lock covers the files `scan` reads, and `scan` reads the working
-tree. It skips files matched by `.gitignore`, symlinks and junctions, but
-an agent may still load such a file. A pull request that adds an agent
-file and also ignores it, or links an agent directory elsewhere, does not
-fail `check`. Hooks are named by their position, so inserting one shows
-the hooks after it as changed.
+The lock covers what an agent loads from a clean checkout of the commit.
+
+- Run `lock` and `check` at the repository root. Outside a git checkout,
+  every file is read and nothing guarantees that two machines see the same
+  set.
+- Untracked files, such as a local `.claude/settings.local.json`, are not
+  scanned or locked. `git add` a file to scan it.
+- A symlink that dangles, has an absolute target, leaves the repository or
+  enters a submodule cannot be scanned. At an agent file's path it is an
+  error. Anywhere else the lock pins its target, so adding or retargeting
+  it fails `check`, but the files behind it are not scanned.
+- Files inside submodules are not scanned. A split or sparse index, and a
+  working tree path that goes through a link git does not record, are
+  errors.
+- `.cursor/environment.json` and hook scripts outside the directories
+  listed under [What it finds](#what-it-finds) are not read yet.
+- Hooks are named by their position, so inserting one shows the hooks
+  after it as changed.
 
 ## What it finds
 
