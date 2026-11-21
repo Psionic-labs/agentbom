@@ -28,7 +28,7 @@ def _git(root: Path, *args: str, stdin: str | None = None) -> str:
         cwd=root,
         input=stdin,
         capture_output=True,
-        text=True,
+        encoding="utf-8",
         check=True,
     )
     return done.stdout.strip()

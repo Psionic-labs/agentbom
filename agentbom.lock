@@ -2,7 +2,7 @@
   "artifacts": {
     "rules:AGENTS.md:AGENTS.md": {
       "definition": {
-        "body": "sha256:0db9af804307c766fd3586493bf797796b9b834f2d3453a76a95e11f0c0826c4",
+        "body": "sha256:c2889e557c9cd5a21d633017185eabd1b9ab115b9eb08852c82f8388c0a1b1c5",
         "frontmatter": {}
       },
       "kind": "rules",
@@ -571,7 +571,7 @@
     }
   },
   "files": {
-    "AGENTS.md": "sha256:0db9af804307c766fd3586493bf797796b9b834f2d3453a76a95e11f0c0826c4",
+    "AGENTS.md": "sha256:c2889e557c9cd5a21d633017185eabd1b9ab115b9eb08852c82f8388c0a1b1c5",
     "fixtures/ABOM-001/benign/accents-and-emoji/AGENTS.md": "sha256:8876f0c62b95163fea15099afcefc2fff90587cc7dfb9e5ddfb7e0fdf7e1f2f7",
     "fixtures/ABOM-001/benign/arabic-rlm-u200f/AGENTS.md": "sha256:b24afe7f9a5f9934f86e98c16b6fea0aeeed15c95e6c54049b767bbc2f1ea89c",
     "fixtures/ABOM-001/benign/devanagari-virama-zwj-u200d/AGENTS.md": "sha256:8bfaec00ac7f683370e635e561f48d6f33cae061bf529331dae43ab114c7fe5a",
