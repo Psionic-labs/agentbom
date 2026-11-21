@@ -1,4 +1,5 @@
 import json
+import re
 import unicodedata
 from typing import Any
 
@@ -22,10 +23,12 @@ from agentbom.models import (
     Severity,
     StdioLaunch,
 )
+from agentbom.policy import POLICY_FILENAME
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 _SEVERITY_LABELS: dict[Severity, str] = {"high": "HIGH", "medium": "MED", "low": "LOW"}
 _INVISIBLE_CATEGORIES = frozenset({"Cc", "Cf", "Co", "Cs", "Zl", "Zp"})
+_BACKTICK_RUNS = re.compile("`+")
 
 
 def render_json(result: ScanResult) -> str:
@@ -33,6 +36,8 @@ def render_json(result: ScanResult) -> str:
         "schema_version": SCHEMA_VERSION,
         "artifacts": [_artifact_document(artifact) for artifact in result.artifacts],
         "drift": [item.model_dump(mode="json") for item in result.drift],
+        "policy_notes": list(result.policy_notes),
+        "suppressed": [item.model_dump(mode="json") for item in result.suppressed],
         "errors": [error.model_dump(mode="json") for error in result.errors],
         "findings": [finding.model_dump(mode="json") for finding in result.findings],
     }
@@ -76,7 +81,7 @@ def summary_line(result: ScanResult) -> str:
     )
 
 
-def print_terminal(result: ScanResult, out: Console, err: Console) -> None:
+def print_terminal(result: ScanResult, out: Console, err: Console, *, drift: bool) -> None:
     out.print(Text(summary_line(result)), soft_wrap=True)
     if result.artifacts:
         table = Table()
@@ -96,10 +101,39 @@ def print_terminal(result: ScanResult, out: Console, err: Console) -> None:
                 )
             )
         out.print(table)
-    for finding in result.findings:
-        out.print(Text(_visible(finding_line(finding))), soft_wrap=True)
-    out.print(Text(findings_total(result)), soft_wrap=True)
+    for line in body_lines(result, drift=drift):
+        out.print(Text(_visible(line)), soft_wrap=True)
     print_errors(result, err)
+
+
+def body_lines(result: ScanResult, *, drift: bool) -> list[str]:
+    """What the terminal and Markdown reports say after the inventory."""
+    lines = [finding_line(finding) for finding in result.findings]
+    lines.append(findings_total(result))
+    if result.suppressed:
+        count = len(result.suppressed)
+        noun = "finding" if count == 1 else "findings"
+        lines.append(f"{count} {noun} suppressed by {POLICY_FILENAME}.")
+    lines.extend(f"policy: {note}" for note in result.policy_notes)
+    if drift:
+        lines.extend(drift_lines(result.drift))
+    return lines
+
+
+def render_markdown(result: ScanResult, *, command: str, drift: bool) -> str:
+    """A heading and one code block, so nothing from the repository renders as Markdown."""
+    lines = [summary_line(result), *body_lines(result, drift=drift)]
+    lines += [f"error: {error.path}: {error.message}" for error in result.errors]
+    text = "\n".join(_visible(line) for line in lines)
+    longest = max((len(run) for run in _BACKTICK_RUNS.findall(text)), default=0)
+    fence = "`" * max(3, longest + 1)
+    return f"### agentbom {command}: {_status(result)}\n\n{fence}text\n{text}\n{fence}\n"
+
+
+def _status(result: ScanResult) -> str:
+    if result.errors:
+        return f"{len(result.errors)} error(s), so the result cannot be trusted"
+    return findings_total(result).removesuffix(".")
 
 
 def print_errors(result: ScanResult, err: Console) -> None:
@@ -107,11 +141,6 @@ def print_errors(result: ScanResult, err: Console) -> None:
         err.print(Text(f"{len(result.errors)} error(s):"))
         for error in result.errors:
             err.print(Text(_visible(f"{error.path}: {error.message}")))
-
-
-def print_drift(result: ScanResult, out: Console) -> None:
-    for line in drift_lines(result.drift):
-        out.print(Text(_visible(line)), soft_wrap=True)
 
 
 def drift_lines(drift: tuple[Drift, ...]) -> list[str]:

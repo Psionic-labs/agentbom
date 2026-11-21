@@ -9,7 +9,7 @@ and it makes no network calls.
 It has three commands. `scan` prints an inventory and the findings of
 its detection rules. `lock` records that inventory in `agentbom.lock`.
 `check` fails when the agent context drifts from the lockfile. A GitHub
-Action is not built yet.
+Action runs `check` on pull requests.
 
 ## Install from source
 
@@ -25,7 +25,7 @@ uv run agentbom scan path/to/repo
 ## Usage
 
 ```sh
-agentbom scan [PATH] [--format terminal|json] [--fail-on high|medium|low]
+agentbom scan [PATH] [--format terminal|json|sarif|markdown] [--fail-on high|medium|low] [--policy FILE]
 ```
 
 `PATH` defaults to the current directory. The terminal format prints a
@@ -36,10 +36,17 @@ MED   ABOM-005  .mcp.json  server "docs" runs npx package "docs-mcp" without an 
 1 finding (0 high, 1 medium, 0 low).
 ```
 
-The JSON format prints a document with `schema_version` (3), `artifacts`,
-`drift`, `errors` and `findings`. `drift` is empty except in `check`. Each finding has a `rule_id`, `severity`,
+The JSON format prints a document with `schema_version` (4), `artifacts`,
+`drift`, `errors`, `findings`, `suppressed` and `policy_notes`. `drift` is
+empty except in `check`. Each finding has a `rule_id`, `severity`,
 `confidence`, `message`, `location`, `artifact_id` and `fix`. Messages
 never quote a secret value.
+
+The SARIF format is SARIF 2.1.0 for GitHub code scanning. Each rule maps
+its severity to GitHub's `security-severity`: high is 8.0, medium 5.0 and
+low 2.0. Findings the policy suppresses are left out. The Markdown format
+is a heading and one code block, which the GitHub Action posts as a pull
+request comment.
 
 Both formats leave out secrets: MCP server `env` and `headers` and the
 settings `env` show their keys only. JSON output leaves out skill, rules
@@ -49,10 +56,49 @@ The scan skips `.git`, files and directories matched by `.gitignore`, and
 symlinks. Files larger than 2 MiB, files that are not UTF-8 and files that
 do not parse are reported as errors.
 
-Exit codes: `2` when `PATH` is not a directory or any file could not be
-read or parsed, because a partial scan cannot be trusted; otherwise `1`
-when a finding has the `--fail-on` severity (default `high`) or higher;
-otherwise `0`.
+Exit codes: `2` when `PATH` is not a directory, the policy file is
+invalid, or any file could not be read or parsed, because a partial scan
+cannot be trusted; otherwise `1` when a finding has the fail-on severity
+or higher; otherwise `0`. The fail-on severity is `--fail-on`, else
+`fail_on` in the policy, else `high`.
+
+## Policy
+
+`scan` and `check` apply `PATH/agentbom.policy.yml` when it exists, or the
+file given with `--policy`. Review it like code: it is the only way to
+silence a finding.
+
+```yaml
+version: 1
+fail_on: high            # high | medium | low
+allow:
+  mcp_servers:
+    - path: .mcp.json
+      name: docs
+      sha256: <content_hash from `agentbom scan --format json`>
+  skills:
+    - path: .claude/skills/release/SKILL.md
+      sha256: <content_hash>
+ignore:
+  - rule: ABOM-005
+    path: tools/            # a .gitignore-style pattern
+    reason: local dev server, never deployed
+    expires: 2027-03-01
+```
+
+- **`allow`** approves one MCP server or skill exactly as reviewed. Its
+  findings are suppressed while its `content_hash` matches. After any
+  edit, its findings are reported again until the policy approves the
+  new hash.
+- **`ignore`** suppresses one rule's findings in matching paths. Every
+  entry needs a `reason` and an `expires` date. It applies through that
+  date, and afterwards its findings are reported again.
+- **Drift (ABOM-006) can never be suppressed.** A policy that ignores it is
+  invalid. Review the change and run `agentbom lock` instead.
+
+Suppressed findings appear under `suppressed` in JSON output and as a
+count in the terminal. Stale entries, such as an expired ignore or an
+ignore that matches nothing, are reported as `policy:` lines.
 
 ## Lockfile and drift
 
@@ -110,6 +156,43 @@ an agent may still load such a file. A pull request that adds an agent
 file and also ignores it, or links an agent directory elsewhere, does not
 fail `check`. Hooks are named by their position, so inserting one shows
 the hooks after it as changed.
+
+## GitHub Action
+
+The composite Action in `action/` runs `check` on each pull request. It
+updates one comment with the result, writes the report to the job
+summary, and fails the job when `check` fails.
+
+```yaml
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  agentbom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: Psionic-labs/agentbom/action@<commit>
+```
+
+| Input | Default | Meaning |
+| --- | --- | --- |
+| `path` | `.` | Repository root to check |
+| `command` | `check` | `check` needs `agentbom.lock`; `scan` does not |
+| `fail-on` | empty | Overrides `fail_on` in the policy |
+| `comment` | `true` | Post or update the pull request comment |
+| `sarif-file` | `agentbom.sarif` | Where to write the SARIF report |
+| `upload-sarif` | `false` | Upload to code scanning; needs `security-events: write`, and GitHub Advanced Security on a private repository |
+| `github-token` | `github.token` | Token for the comment |
+
+A pull request from a fork gets a read-only token, so the comment is
+skipped with a warning and the check still runs. The Action never runs
+code from the repository it checks. It does install and run agentbom from
+its own checkout, so pin it to a commit.
 
 ## What it finds
 

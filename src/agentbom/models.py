@@ -162,9 +162,19 @@ class Drift(_Frozen):
     fields: tuple[FieldChange, ...]
 
 
+class Suppression(_Frozen):
+    """A finding that agentbom.policy.yml approves or ignores, with its reason."""
+
+    finding: Finding
+    by: Literal["allow", "ignore"]
+    reason: str
+
+
 class ScanResult(_Frozen):
     artifacts: tuple[Artifact, ...]
     errors: tuple[ScanError, ...]
     findings: tuple[Finding, ...]
     drift: tuple[Drift, ...] = ()
+    suppressed: tuple[Suppression, ...] = ()
+    policy_notes: tuple[str, ...] = ()
     file_digests: dict[str, str] = Field(default_factory=dict)

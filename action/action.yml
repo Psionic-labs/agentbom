@@ -1,0 +1,120 @@
+name: agentbom
+description: >-
+  Check the agent context a repository loads (MCP servers, hooks, skills and
+  rules files) for drift from agentbom.lock and risky patterns, and comment on
+  the pull request.
+inputs:
+  path:
+    description: Repository root to check, relative to the workspace.
+    default: "."
+  command:
+    description: "`check` compares against agentbom.lock; `scan` needs no lockfile."
+    default: check
+  fail-on:
+    description: >-
+      Severity that fails the job: high, medium or low. Empty uses fail_on from
+      agentbom.policy.yml, or high.
+    default: ""
+  comment:
+    description: Post the result on the pull request, updating the same comment on each run.
+    default: "true"
+  sarif-file:
+    description: Where to write the SARIF report, relative to the workspace.
+    default: agentbom.sarif
+  upload-sarif:
+    description: >-
+      Upload the SARIF report to GitHub code scanning. Needs the
+      `security-events: write` permission, and GitHub Advanced Security on a
+      private repository.
+    default: "false"
+  github-token:
+    description: Token used to comment on the pull request.
+    default: ${{ github.token }}
+outputs:
+  exit-code:
+    description: agentbom's exit code. 0 passes, 1 means findings at the fail-on severity, 2 means a tool error.
+    value: ${{ steps.run.outputs.exit-code }}
+  sarif-file:
+    description: Path of the SARIF report.
+    value: ${{ inputs.sarif-file }}
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+
+    - id: run
+      shell: bash
+      env:
+        AGENTBOM_SOURCE: ${{ github.action_path }}/..
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_COMMAND: ${{ inputs.command }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_SARIF: ${{ inputs.sarif-file }}
+      run: |
+        case "$INPUT_COMMAND" in
+          check|scan) ;;
+          *) echo "::error::command must be check or scan, not $INPUT_COMMAND"; exit 2 ;;
+        esac
+        args=("$INPUT_COMMAND" "$INPUT_PATH")
+        if [ -n "$INPUT_FAIL_ON" ]; then args+=(--fail-on "$INPUT_FAIL_ON"); fi
+        report="$RUNNER_TEMP/agentbom-report.md"
+        set +e
+        uvx --quiet --from "$AGENTBOM_SOURCE" agentbom "${args[@]}" --format sarif > "$INPUT_SARIF"
+        uvx --quiet --from "$AGENTBOM_SOURCE" agentbom "${args[@]}" --format markdown > "$report"
+        code=$?
+        set -e
+        if [ -s "$report" ]; then
+          cat "$report"
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        echo "report=$report" >> "$GITHUB_OUTPUT"
+
+    - if: inputs.comment == 'true' && github.event.pull_request.number
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        REPOSITORY: ${{ github.repository }}
+        PULL_REQUEST: ${{ github.event.pull_request.number }}
+        REPORT: ${{ steps.run.outputs.report }}
+        EXIT_CODE: ${{ steps.run.outputs.exit-code }}
+        INPUT_COMMAND: ${{ inputs.command }}
+      run: |
+        marker="<!-- agentbom -->"
+        body="$RUNNER_TEMP/agentbom-comment.md"
+        failed="### agentbom $INPUT_COMMAND: exited with code $EXIT_CODE; see the job log"
+        if [ ! -s "$REPORT" ]; then
+          printf '%s\n%s\n' "$marker" "$failed" > "$body"
+        elif [ "$(wc -c < "$REPORT")" -gt 60000 ]; then
+          printf '%s\n%s\n\nThe full report is in the job summary.\n' "$marker" "$(head -n 1 "$REPORT")" > "$body"
+        else
+          { echo "$marker"; cat "$REPORT"; } > "$body"
+        fi
+        existing=$(gh api --paginate "repos/$REPOSITORY/issues/$PULL_REQUEST/comments" \
+          --jq ".[] | select(.user.type == \"Bot\" and (.body | startswith(\"$marker\"))) | .id" \
+          | head -n 1) || existing=""
+        if [ -n "$existing" ]; then
+          posted=$(gh api -X PATCH "repos/$REPOSITORY/issues/comments/$existing" -F "body=@$body" --jq .html_url)
+        else
+          posted=$(gh api "repos/$REPOSITORY/issues/$PULL_REQUEST/comments" -F "body=@$body" --jq .html_url)
+        fi || posted=""
+        if [ -n "$posted" ]; then
+          echo "Commented: $posted"
+        else
+          echo "::warning::agentbom could not comment; a pull request from a fork gets a read-only token"
+        fi
+
+    - if: inputs.upload-sarif == 'true'
+      uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+      with:
+        sarif_file: ${{ inputs.sarif-file }}
+        category: agentbom
+
+    - shell: bash
+      env:
+        EXIT_CODE: ${{ steps.run.outputs.exit-code }}
+      run: |
+        if [ "$EXIT_CODE" != "0" ]; then
+          echo "::error::agentbom exited with code $EXIT_CODE"
+          exit "$EXIT_CODE"
+        fi
