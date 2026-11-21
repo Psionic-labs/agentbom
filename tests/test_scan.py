@@ -149,36 +149,32 @@ def test_malformed_file_is_an_error_and_other_files_still_inventory(tmp_path: Pa
     assert result.errors[1].message.startswith("invalid JSON")
 
 
-def test_gitignore_rules_apply_per_directory(tmp_path: Path) -> None:
+def test_outside_git_every_file_is_scanned_whatever_gitignore_says(tmp_path: Path) -> None:
     write_tree(
         tmp_path,
         {
-            ".gitignore": "build/\nCLAUDE.local.md\n!/kept/CLAUDE.local.md\n!build/AGENTS.md\n",
-            "CLAUDE.local.md": "ignored by root pattern",
-            "kept/CLAUDE.local.md": "re-included by negation",
-            "build/AGENTS.md": "inside an ignored directory, which git never re-includes",
-            "build/.claude/skills/s/SKILL.md": b"\xff not even utf-8",
+            ".gitignore": "build/\nCLAUDE.local.md\n",
+            "CLAUDE.local.md": "named by .gitignore",
+            "build/AGENTS.md": "inside an ignored directory",
             "pkg/.gitignore": "AGENTS.md\n",
-            "pkg/AGENTS.md": "ignored by nested .gitignore",
-            "pkg/sub/AGENTS.md": "ignored by the parent directory's .gitignore",
-            "pkg/keep/.gitignore": "!AGENTS.md\n",
-            "pkg/keep/AGENTS.md": "re-included by the deeper .gitignore",
-            "other/AGENTS.md": "a sibling .gitignore does not apply",
+            "pkg/AGENTS.md": "named by a nested .gitignore",
         },
     )
     assert {path for _, path, _, _ in _inventory(tmp_path)} == {
-        "kept/CLAUDE.local.md",
-        "pkg/keep/AGENTS.md",
-        "other/AGENTS.md",
+        "CLAUDE.local.md",
+        "build/AGENTS.md",
+        "pkg/AGENTS.md",
     }
 
 
-def test_git_directory_is_not_scanned(tmp_path: Path) -> None:
-    write_tree(tmp_path, {".git/AGENTS.md": "x", "AGENTS.md": "x"})
+def test_nested_git_directories_are_not_scanned_outside_git(tmp_path: Path) -> None:
+    write_tree(tmp_path, {"vendor/lib/.git/AGENTS.md": "x", "AGENTS.md": "x"})
     assert {path for _, path, _, _ in _inventory(tmp_path)} == {"AGENTS.md"}
 
 
-def test_symlinked_files_and_directories_are_not_read(tmp_path: Path) -> None:
+def test_symlinks_are_followed_through_the_tree_and_dangling_ones_are_errors(
+    tmp_path: Path,
+) -> None:
     write_tree(
         tmp_path,
         {".agents/skills/s/SKILL.md": SKILL.format(name="s"), "docs/notes.md": "notes"},
@@ -186,18 +182,25 @@ def test_symlinked_files_and_directories_are_not_read(tmp_path: Path) -> None:
     symlink_or_skip(tmp_path / ".claude", ".agents", is_dir=True)
     symlink_or_skip(tmp_path / "CLAUDE.md", "docs/notes.md", is_dir=False)
     symlink_or_skip(tmp_path / "AGENTS.md", "missing.md", is_dir=False)
-    assert _inventory(tmp_path) == {
-        ("skill", ".agents/skills/s/SKILL.md", "s", ("codex", "cursor"))
+    result = scan(tmp_path)
+    assert [(e.path, e.message) for e in result.errors] == [
+        ("AGENTS.md", "symlink points to nothing in the repository")
+    ]
+    assert {(a.kind, a.source.path) for a in result.artifacts} == {
+        ("skill", ".agents/skills/s/SKILL.md"),
+        ("rules", "docs/notes.md"),
     }
+    assert {".claude", "CLAUDE.md"} <= result.file_digests.keys()
 
 
-def test_junctioned_directories_are_not_read(tmp_path: Path) -> None:
+def test_junctions_are_not_followed_and_are_locked_by_target(tmp_path: Path) -> None:
     write_tree(tmp_path, {".agents/skills/s/SKILL.md": SKILL.format(name="s")})
     junction_or_skip(tmp_path / ".claude", tmp_path / ".agents")
     assert (tmp_path / ".claude" / "skills" / "s" / "SKILL.md").is_file()
-    assert _inventory(tmp_path) == {
-        ("skill", ".agents/skills/s/SKILL.md", "s", ("codex", "cursor"))
-    }
+    result = scan(tmp_path)
+    assert result.errors == ()
+    assert [a.source.path for a in result.artifacts] == [".agents/skills/s/SKILL.md"]
+    assert ".claude" in result.file_digests
 
 
 def test_file_size_limit(tmp_path: Path) -> None:
