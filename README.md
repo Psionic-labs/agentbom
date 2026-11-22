@@ -9,7 +9,7 @@ The command you type is `agentbom`.
 You need Python 3.11 or later and [uv](https://docs.astral.sh/uv/).
 
 ```sh
-uv tool install git+https://github.com/Psionic-labs/contextlock.git
+uv tool install contextlock
 agentbom scan .
 ```
 
@@ -30,10 +30,10 @@ The exit code is one of these.
 
 Pass `--fail-on medium` or `--fail-on low` when a lower severity should also fail the command. A `fail_on` value in `agentbom.policy.yml` does the same job when you omit the flag.
 
-If you have pip and not uv, install from the same address.
+If you have pip and not uv, install from PyPI.
 
 ```sh
-pip install git+https://github.com/Psionic-labs/contextlock.git
+pip install contextlock
 agentbom scan .
 ```
 
