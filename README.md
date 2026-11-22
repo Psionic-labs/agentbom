@@ -11,7 +11,25 @@ its detection rules. `lock` records that inventory in `agentbom.lock`.
 `check` fails when the agent context drifts from the lockfile. A GitHub
 Action runs `check` on pull requests.
 
-## Install from source
+## Quickstart
+
+Install the current revision with [uv](https://docs.astral.sh/uv/) and Python 3.11 or later.
+
+```sh
+uv tool install git+https://github.com/Psionic-labs/agentbom.git
+agentbom scan .
+```
+
+`scan` prints one line per finding and a count. Exit code `0` means no finding at the fail-on severity or above. Exit code `1` means a finding. Exit code `2` means the path is not a directory, or a file could not be read or parsed.
+
+With pip, use the same package URL.
+
+```sh
+pip install git+https://github.com/Psionic-labs/agentbom.git
+agentbom scan .
+```
+
+## Install from a checkout
 
 Requires [uv](https://docs.astral.sh/uv/) and Python 3.11 or later.
 
@@ -236,10 +254,20 @@ The patterns live in `src/agentbom/registry.py`.
 Each rule lives in `src/agentbom/rules/` and is proven by the malicious and
 benign cases under `fixtures/<RULE-ID>/`.
 
-| ID | Rule | Severity | Confidence |
-| --- | --- | --- | --- |
-| ABOM-005 | Unpinned server: an MCP server launched with `npx`, `bunx`, `npm exec`, `pnpm dlx`, `yarn dlx`, `uvx`, `uv tool run`, `pipx run`, `docker run` or `podman run` from a package without an exact version, a git source without a commit, or an image with no tag or `latest` | Medium | High |
-| ABOM-006 | Drift: an artifact or agent file differs from `agentbom.lock`. Reported by `check` only | High | High |
+| ID | What it checks | Severity |
+| --- | --- | --- |
+| ABOM-001 | Hidden Unicode (tag, zero-width or bidirectional characters) in agent context | High |
+| ABOM-002 | Downloads and runs a script, such as curl piped to a shell | High |
+| ABOM-003 | Reads SSH keys, cloud credentials, `.env` files, keychains or browser profiles | High |
+| ABOM-004 | Sends file contents or environment variables to an external URL | High |
+| ABOM-005 | MCP server launched from a package, image or git source without an exact version | Medium |
+| ABOM-006 | Agent context differs from `agentbom.lock`. Reported by `check` only | High |
+| ABOM-007 | Wildcard allowlists, permission-bypass modes or auto-approve-all settings | Medium |
+| ABOM-008 | Hook that runs shell commands automatically from repository-controlled files | Medium |
+| ABOM-009 | Tells the agent to ignore earlier instructions or hide actions from the user | Medium |
+| ABOM-010 | Hard-coded token or secret instead of an environment variable reference | High |
+
+Each finding also has its own confidence. The severity above is the rule's default.
 
 ## License
 

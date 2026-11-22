@@ -1,5 +1,5 @@
 [project]
-name = "agentbom"
+name = "agentbom1"
 version = "0.1.0"
 description = "Static inventory of the agent context a repository loads: MCP servers, skills, hooks and rules files."
 readme = "README.md"

@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "agentbom"
+name = "agentbom1"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
