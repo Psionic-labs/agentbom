@@ -4,7 +4,7 @@
 
 Email [vasantmogia05@gmail.com](mailto:vasantmogia05@gmail.com).
 
-Include the command you ran, the file that produced the result, and the installed version from `python -c "import importlib.metadata; print(importlib.metadata.version('agentbom'))"`. Leave secret values out of the message.
+Include the command you ran, the file that produced the result, and the installed version from `python -c "import importlib.metadata; print(importlib.metadata.version('contextlock'))"`. Leave secret values out of the message.
 
 Do not open a public GitHub issue for a vulnerability in agentbom.
 

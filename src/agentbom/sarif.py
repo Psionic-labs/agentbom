@@ -9,7 +9,7 @@ from urllib.parse import quote
 from agentbom.models import Finding, RuleId, ScanResult, Severity
 
 SARIF_SCHEMA = "https://json.schemastore.org/sarif-2.1.0.json"
-INFORMATION_URI = "https://github.com/Psionic-labs/agentbom"
+INFORMATION_URI = "https://github.com/Psionic-labs/contextlock"
 
 # Name, one-line description and default severity, from the detection rules spec.
 RULE_INFO: dict[RuleId, tuple[str, str, Severity]] = {
@@ -75,7 +75,7 @@ def render_sarif(result: ScanResult) -> str:
         "tool": {
             "driver": {
                 "name": "agentbom",
-                "version": version("agentbom"),
+                "version": version("contextlock"),
                 "informationUri": INFORMATION_URI,
                 "rules": [_rule(rule_id) for rule_id in _RULE_IDS],
             }
