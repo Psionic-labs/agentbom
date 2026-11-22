@@ -2,7 +2,7 @@
 
 ## Report a vulnerability in agentbom
 
-Email [vasantmogia05@gmail.com](mailto:vasantmogia05@gmail.com).
+Email [hello@psioniclabs.tech](mailto:hello@psioniclabs.tech).
 
 Include the command you ran, the file that produced the result, and the installed version from `python -c "import importlib.metadata; print(importlib.metadata.version('contextlock'))"`. Leave secret values out of the message.
 
