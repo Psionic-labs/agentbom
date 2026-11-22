@@ -1,5 +1,5 @@
 [project]
-name = "agentbom1"
+name = "contextlock"
 version = "0.1.0"
 description = "Static inventory of the agent context a repository loads: MCP servers, skills, hooks and rules files."
 readme = "README.md"
@@ -20,6 +20,9 @@ agentbom = "agentbom.cli:app"
 [build-system]
 requires = ["uv_build>=0.11,<0.12"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "agentbom"
 
 [dependency-groups]
 dev = [
