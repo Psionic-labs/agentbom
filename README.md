@@ -1,6 +1,6 @@
 # contextlock
 
-[![CI](https://github.com/Psionic-labs/contextlock/actions/workflows/ci.yml/badge.svg)](https://github.com/Psionic-labs/contextlock/actions/workflows/ci.yml) [![PyPI](https://img.shields.io/pypi/v/contextlock.svg)](https://pypi.org/project/contextlock/) [![PyPI downloads](https://img.shields.io/pypi/dm/contextlock.svg)](https://pypistats.org/packages/contextlock) [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://pypi.org/project/contextlock/) [![License](https://img.shields.io/pypi/l/contextlock.svg)](LICENSE) [![M8ven Score](https://m8ven.ai/badge/mcp/psionic-labs-contextlock-3kx2ed?v=b08fcdad5ad138846e18fcc347c8f3b9)](https://m8ven.ai/mcp/psionic-labs-contextlock-3kx2ed?s=readme)
+[![CI](https://github.com/Psionic-labs/contextlock/actions/workflows/ci.yml/badge.svg)](https://github.com/Psionic-labs/contextlock/actions/workflows/ci.yml) [![PyPI](https://img.shields.io/pypi/v/contextlock.svg)](https://pypi.org/project/contextlock/) [![PyPI downloads](https://img.shields.io/pypi/dm/contextlock.svg)](https://pypistats.org/packages/contextlock) [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://pypi.org/project/contextlock/) [![License](https://img.shields.io/pypi/l/contextlock.svg)](LICENSE)
 
 <p align="center">
   <img src="assets/contextlock-mascot.svg" alt="contextlock mascot, a padlock holding a magnifying glass and a manifest" width="180">
