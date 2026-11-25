@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">contextlock mascot</title>
+  <desc id="desc">A teal padlock holding a magnifying glass and a manifest clipboard.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101d38"/>
+      <stop offset="1" stop-color="#1b3358"/>
+    </linearGradient>
+    <linearGradient id="lock" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#48e0c4"/>
+      <stop offset="1" stop-color="#14b8a6"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="104" fill="url(#bg)"/>
+  <rect x="54" y="150" width="150" height="210" rx="16" fill="#163454" stroke="#3b82a6" stroke-width="5"/>
+  <rect x="100" y="134" width="58" height="30" rx="9" fill="#fbbf24"/>
+  <rect x="78" y="205" width="102" height="9" rx="4.5" fill="#2dd4bf" opacity="0.55"/>
+  <rect x="78" y="235" width="102" height="9" rx="4.5" fill="#2dd4bf" opacity="0.55"/>
+  <rect x="78" y="265" width="102" height="9" rx="4.5" fill="#2dd4bf" opacity="0.55"/>
+  <rect x="78" y="295" width="64" height="9" rx="4.5" fill="#fbbf24" opacity="0.85"/>
+  <ellipse cx="256" cy="438" rx="132" ry="14" fill="#0c1730" opacity="0.35"/>
+  <path d="M 198 252 L 198 190 A 58 58 0 0 1 314 190 L 314 252" fill="none" stroke="#0c1730" stroke-width="30" stroke-linecap="round"/>
+  <rect x="150" y="244" width="212" height="180" rx="42" fill="url(#lock)" stroke="#0c1730" stroke-width="8"/>
+  <circle cx="220" cy="316" r="24" fill="#f8fafc"/>
+  <circle cx="292" cy="316" r="24" fill="#f8fafc"/>
+  <circle cx="225" cy="320" r="10" fill="#0c1730"/>
+  <circle cx="287" cy="320" r="10" fill="#0c1730"/>
+  <circle cx="229" cy="316" r="3.5" fill="#ffffff"/>
+  <circle cx="291" cy="316" r="3.5" fill="#ffffff"/>
+  <path d="M 228 366 Q 256 390 284 366" fill="none" stroke="#0c1730" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="388" cy="278" r="40" fill="#2dd4bf" fill-opacity="0.12" stroke="#fbbf24" stroke-width="12"/>
+  <path d="M 416 306 L 452 342" fill="none" stroke="#fbbf24" stroke-width="18" stroke-linecap="round"/>
+</svg>
